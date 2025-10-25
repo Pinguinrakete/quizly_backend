@@ -8,10 +8,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'password', 'confirmed_password', 'email']
         extra_kwargs = {
-            'password': {'write_only': True, 
-                         'required': True
-                        }
-                    }
+            'username': {'required': True},
+            'email': {'required': True},
+            'password': {'write_only': True, 'required': True},
+        }
     
     def validate_confirmed_password(self, value):
         password = self.initial_data.get('password')
@@ -21,12 +21,12 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("A user with this username already exists.")
+            raise serializers.ValidationError("Invalid credentials.")
         return value
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
+            raise serializers.ValidationError("Invalid credentials.")
         return value
     
     def save(self):
