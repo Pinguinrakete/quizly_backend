@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -39,3 +40,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         account.set_password(pw)
         account.save() 
         return account
+    
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if not username or not password:
+            raise serializers.ValidationError("Both fields must be filled out.")
+
+        user = authenticate(username=username, password=password)  
+        if user is None:
+            raise serializers.ValidationError(("Invalid username or password."))
+
+        attrs['user'] = user
+        return attrs
