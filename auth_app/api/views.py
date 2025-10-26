@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.views import APIView
 from .serializers import RegisterSerializer, LoginSerializer
 
@@ -26,6 +27,12 @@ class LoginView(APIView):
         
         if serializer.is_valid():
             user = serializer.validated_data['user']
+
+            access_token = AccessToken.for_user(user)
+            refresh_token = RefreshToken.for_user(user)
+
+            print(f'access: ', str(access_token))
+            print(f'refresh: ' , str(refresh_token))
 
             return Response({
                 "detail": "Login successfully!",
