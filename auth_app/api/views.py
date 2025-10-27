@@ -1,7 +1,8 @@
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from rest_framework.views import APIView
 from .serializers import RegisterSerializer, LoginSerializer
 
@@ -19,20 +20,15 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class LoginView(APIView):
+class LoginView(TokenObtainPairView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
+        response = super().post(request, *args, **kwargs)
         
         if serializer.is_valid():
             user = serializer.validated_data['user']
-
-            access_token = AccessToken.for_user(user)
-            refresh_token = RefreshToken.for_user(user)
-
-            print(f'access: ', str(access_token))
-            print(f'refresh: ' , str(refresh_token))
 
             return Response({
                 "detail": "Login successfully!",
@@ -41,6 +37,27 @@ class LoginView(APIView):
                     "username": user.username,
                     "email": user.email
                 }
-                }, status=status.HTTP_200_OK)
+            }, status=status.HTTP_200_OK)
+        
+        if response.status_code == status.HTTP_200_OK:
+            access_token = response.data['access']
+            refresh_token = response.data['refresh']
+
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+            )
+
+            response.set_cookie(
+                key='refresh_token',
+                value=refresh_token,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+            )
+            return response
 
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
