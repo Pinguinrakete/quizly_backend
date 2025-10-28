@@ -37,8 +37,8 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             refresh = RefreshToken.for_user(user)
             access = refresh.access_token
 
-            response = Response({
-                "detail": "Login successfully!",
+            response = Response(
+                {"detail": "Login successfully!",
                 "user": {
                     "id": user.id,
                     "username": user.username,
@@ -70,10 +70,37 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     
 
 class CookieTokenRefreshView(TokenRefreshView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
-    pass
+    def post(self, request, *args, **kwargs):
+        refresh = request.COOKIES.get("refresh_token")       
+        serializer = self.get_serializer(data={"refresh": refresh})
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except:
+            return Response(
+                {"detail": "Refresh token invalid!"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        access = serializer.validated_data.get("access")
+
+        response = Response(
+            {"message": "Token refreshed",
+             "access": access, 
+            }, status=status.HTTP_200_OK)
+        
+        response.set_cookie(
+            key="access_token",
+            value=str(access),
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            max_age=10 * 60
+        )
+
+        return response
     
 
 class LogoutView(APIView):
