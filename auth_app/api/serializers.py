@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
     confirmed_password = serializers.CharField(write_only=True, required=True)
@@ -42,7 +43,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return account
     
 
-class LoginSerializer(serializers.Serializer):
+class CookieTokenObtainPairSerializer(TokenObtainPairSerializer):
     username = serializers.CharField(write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
@@ -58,4 +59,5 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(("Invalid username or password."))
 
         attrs['user'] = user
+
         return attrs
