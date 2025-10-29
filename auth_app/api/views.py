@@ -8,6 +8,12 @@ from rest_framework.views import APIView
 from .serializers import RegisterSerializer, CookieTokenObtainPairSerializer
 
 class RegisterView(APIView):
+    """
+    Create a new user account.
+
+    Returns a success message upon successful registration 
+    or validation errors otherwise.
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [AllowAny]
 
@@ -26,6 +32,12 @@ class RegisterView(APIView):
   
 
 class CookieTokenObtainPairView(TokenObtainPairView):
+    """
+    Handle user login and set JWT cookies.
+
+    On success, returns user details and sets access/refresh tokens 
+    as HTTP-only cookies. Returns 401 if authentication fails.
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [AllowAny]
 
@@ -70,6 +82,12 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     
 
 class CookieTokenRefreshView(TokenRefreshView):
+    """
+    Refreshes the user's access token using the refresh token from cookies.
+
+    Validates the refresh token, issues a new access token, 
+    and updates the access cookie.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -104,6 +122,10 @@ class CookieTokenRefreshView(TokenRefreshView):
     
 
 class LogoutView(APIView):
+    """
+    Logs out the authenticated user by blacklisting the refresh token 
+    and removing authentication cookies.
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
