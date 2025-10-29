@@ -119,11 +119,19 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Configure DRF to use JWT authentication by default.
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+# Configuration for Simple JWT authentication.
+# - ACCESS_TOKEN_LIFETIME: Access tokens expire after 10 minutes.
+# - REFRESH_TOKEN_LIFETIME: Refresh tokens expire after 1 day.
+# - BLACKLIST_AFTER_ROTATION: Blacklist refresh tokens after use.
+# - UPDATE_LAST_LOGIN: Update user's last login timestamp on token refresh.
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
