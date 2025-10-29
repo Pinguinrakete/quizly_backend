@@ -4,6 +4,12 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user registration.
+
+    Validates username, email, and password confirmation, 
+    and creates a new user with a securely hashed password.
+    """
     confirmed_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -44,6 +50,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     
 
 class CookieTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Serializer for authenticating users via username and password.
+
+    Validates login credentials and returns the authenticated user 
+    if the credentials are correct.
+    """
     username = serializers.CharField(write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
