@@ -1,6 +1,14 @@
 from django.urls import path
 from .views import CreateQuizView, QuizzesView, QuizSingleView
 
+"""
+    URL routes for quiz-related API endpoints.
+
+    Includes endpoints for:
+    - Creating a new quiz
+    - Retrieving a list of all quizzes
+    - Retrieving, updating, or deleting a single quiz by its ID
+"""
 urlpatterns = [
     path('createQuiz/', CreateQuizView.as_view(), name='create-quiz'),
     path('quizzes/', QuizzesView.as_view(), name='quizzes-view'),
