@@ -1,49 +1,37 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
+  
 
-class QuestionOptionDetails(models.Model):
+class QuizQuestions(models.Model):
     """
-    Represents a single answer option for a quiz question.
+    Represents a quiz question with multiple choice options and its correct answer.
 
     Attributes:
-        option_text (str): The text content of the option (e.g., "Option A").
-    
-    Methods:
-        __str__: Returns a readable string representation of the option text.
-    """
-    option_text = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.option_text
-    
-
-class QuizQuestionDetails(models.Model):
-    """
-    Represents a quiz question along with its options and correct answer.
-
-    Attributes:
-        question_title (str): The text of the question (e.g., "What is the capital of France?").
-        question_options (ManyToManyField): The possible answer options related to the question.
-        answer (str): The correct answer to the question.
-        created_at (datetime): The timestamp when the question was created.
-        updated_at (datetime): The timestamp when the question was last updated.
+        question_title (str): The text of the quiz question 
+            (e.g., "What is the capital of France?").
+        question_options (list of str): A list containing exactly 4 possible answer options.
+        answer (str): The correct answer, which must match one of the options in `question_options`.
+        created_at (datetime): The timestamp when the question was created (auto-generated).
+        updated_at (datetime): The timestamp when the question was last updated (auto-updated).
 
     Methods:
-        clean: Validates that each question must have exactly 4 answer options.
-        __str__: Returns the string representation of the question title.
+        clean(): Ensures that `question_options` contains exactly 4 items.
+        save(*args, **kwargs): Calls `full_clean` before saving to enforce validation.
+        __str__(): Returns the `question_title` as the string representation of the object.
     """
     question_title = models.CharField(max_length=255)
-    question_options = models.ManyToManyField(QuestionOptionDetails, blank=True)
+    question_options = models.JSONField(default=list, blank=True)
     answer = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
-        """
-        Validates that the question has exactly 4 answer options.
-        """
-        if self.pk and self.question_options.count() != 4:
-            from django.core.exceptions import ValidationError
+        if len(self.question_options) != 4:
             raise ValidationError("Each question must have exactly 4 answer options.")
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()  
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.question_title
@@ -69,7 +57,7 @@ class Quiz(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     video_url = models.CharField(max_length=255)
-    questions = models.ManyToManyField(QuizQuestionDetails, blank=True)
+    questions = models.ManyToManyField(QuizQuestions, blank=True)
     
     def __str__(self):
         return self.title
