@@ -5,16 +5,24 @@ from quiz_app.models import Quiz, QuizQuestions
 class YoutubeURLSerializer(serializers.ModelSerializer):
     url = serializers.CharField(max_length=255)
 
+    class Meta:
+        model = Quiz
+        fields = ["url"] 
+        
+    def validate_url(self, value):
+
+        if "youtube.com" not in value and "youtu.be" not in value:
+            raise serializers.ValidationError("Invalid YouTube URL.")
+        return value
 
 
-
-    
 class QuestionSerializer(serializers.ModelSerializer):
     question_options = serializers.ListField(child=serializers.CharField(max_length=255), required=False, default=list)
 
     class Meta:
         model = QuizQuestions
         fields = ['id', 'question_title','question_options', 'answer', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'question_title','question_options', 'answer', 'created_at', 'updated_at']
 
     def validate_question_options(self, value):
         if len(value) != 4:
@@ -28,3 +36,4 @@ class CreateQuizSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
         fields = ['id', 'title','description', 'created_at', 'updated_at', 'video_url', 'questions']
+        read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
   
 
@@ -42,6 +43,7 @@ class Quiz(models.Model):
     Represents a quiz consisting of multiple questions and optional metadata.
 
     Attributes:
+        owner (User): The user who created or owns the quiz.
         title (str): The title of the quiz.
         description (str): A short description of the quiz.
         created_at (datetime): The timestamp when the quiz was created.
@@ -52,8 +54,9 @@ class Quiz(models.Model):
     Methods:
         __str__: Returns the string representation of the quiz title.
     """
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quizzes")
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     video_url = models.CharField(max_length=255)

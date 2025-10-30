@@ -1,14 +1,16 @@
 from .permissions import IsOwner
 from .serializers import YoutubeURLSerializer, CreateQuizSerializer
+from rest_framework import generics
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
+from quiz_app.models import Quiz
 
 class CreateQuizView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request):
         serializer = YoutubeURLSerializer(data=request.data, context={'request': request})
@@ -22,10 +24,13 @@ class CreateQuizView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class QuizzesView(APIView):
+class MyQuizzesView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    pass
+    permission_classes = [IsAuthenticated, IsOwner]
+    serializer_class = CreateQuizSerializer
+
+    def get_queryset(self):
+        return Quiz.objects.filter(owner=self.request.user)
 
 
 class QuizSingleView(APIView):
