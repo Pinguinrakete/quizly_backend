@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from quiz_app.models import Quiz, QuizQuestions
+from urllib.parse import urlparse
 
 
 class YoutubeURLSerializer(serializers.ModelSerializer):
@@ -8,11 +9,17 @@ class YoutubeURLSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
         fields = ["url"] 
-        
-    def validate_url(self, value):
 
-        if "youtube.com" not in value and "youtu.be" not in value:
+    def validate_url(value):
+        if not value:
+            raise serializers.ValidationError("URL cannot be empty.")
+
+        parsed_url = urlparse(value)
+        valid_domains = ["youtube.com", "www.youtube.com", "youtu.be", "m.youtube.com"]
+
+        if parsed_url.netloc not in valid_domains:
             raise serializers.ValidationError("Invalid YouTube URL.")
+
         return value
 
 
