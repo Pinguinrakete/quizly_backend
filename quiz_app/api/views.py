@@ -1,5 +1,5 @@
 from .permissions import IsOwner
-from .serializers import YoutubeURLSerializer, CreateQuizSerializer
+from .serializers import YoutubeURLSerializer, CreateQuizSerializer, QuizSinglePatchSerializer
 from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework import status
@@ -49,14 +49,25 @@ class QuizSingleView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+    def patch(self, request, pk):
+        try:
+            order = Quiz.objects.get(pk=pk)
+        except Quiz.DoesNotExist:
+            return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = QuizSinglePatchSerializer(order, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            quiz = serializer.save()
+            return Response(CreateQuizSerializer(quiz, context={'request': request}).data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     def delete(self, request, id):
         try:
             quiz = Quiz.objects.get(pk=id)
         except Quiz.DoesNotExist:
-            return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-        if request.user.id != quiz.owner_id:
-            return Response({"detail": "Only the owner can delete this quiz."}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)       
 
         quiz.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

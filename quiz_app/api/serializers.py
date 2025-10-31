@@ -44,3 +44,10 @@ class CreateQuizSerializer(serializers.ModelSerializer):
         model = Quiz
         fields = ['id', 'title','description', 'created_at', 'updated_at', 'video_url', 'questions']
         read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+
+
+class QuizSinglePatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quiz
+        fields = ['title']
+        read_only_fields = ['id', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
