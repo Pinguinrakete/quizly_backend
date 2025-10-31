@@ -1,5 +1,6 @@
 from .permissions import IsOwner
 from .serializers import YoutubeURLSerializer, CreateQuizSerializer
+from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -37,4 +38,16 @@ class MyQuizzesView(generics.ListAPIView):
 class QuizSingleView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
-    pass
+
+    def delete(self, request, id):
+        try:
+            quiz = Quiz.objects.get(pk=id)
+        except Quiz.DoesNotExist:
+            return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        if request.user.id != quiz.owner.id:
+            return Response({"detail": "Only the owner can delete this quiz."}, status=status.HTTP_403_FORBIDDEN)
+
+        quiz.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
