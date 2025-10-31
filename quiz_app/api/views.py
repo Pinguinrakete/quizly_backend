@@ -39,13 +39,23 @@ class QuizSingleView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
+    def get(self, request, pk):
+        try:
+            quiz = Quiz.objects.get(id=pk)
+        except Quiz.DoesNotExist:
+            return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CreateQuizSerializer(quiz, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
     def delete(self, request, id):
         try:
             quiz = Quiz.objects.get(pk=id)
         except Quiz.DoesNotExist:
             return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
         
-        if request.user.id != quiz.owner.id:
+        if request.user.id != quiz.owner_id:
             return Response({"detail": "Only the owner can delete this quiz."}, status=status.HTTP_403_FORBIDDEN)
 
         quiz.delete()
