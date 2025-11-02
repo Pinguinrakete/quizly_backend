@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
 
@@ -18,17 +20,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
+# Load the .env file
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b978n1k*#0)ggtg0uo8baxo^b4q$m_d9x14cmqre4w+&0!)r!k'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Example: API Keys
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMINI_API_SECRET = os.getenv('GEMINI_API_SECRET')
 
 # Application definition
 

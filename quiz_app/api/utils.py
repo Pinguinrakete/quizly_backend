@@ -1,4 +1,12 @@
 import torch, os, yt_dlp, whisper
+from google import genai
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("GEMINI_API_KEY")
+
+CLIENT = genai.Client(api_key=API_KEY)
+
 
 class AudioQuestionGenerator:
     file = ''
@@ -38,3 +46,10 @@ class AudioQuestionGenerator:
             f.write(result['text'])
 
         print(f"✅ Transcription saved in {text_file_path}")
+
+
+    def generate_questions_gemini(self, text):
+        response = CLIENT.models.generate_content(
+            model="gemini-2.5-flash", contents="Explain how AI works in a few words"
+        )
+        print(response.text)

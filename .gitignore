@@ -15,3 +15,6 @@ quiz_app/migrations/
 
 # Python virtual environments
 env/
+
+# Environment variables
+.env
