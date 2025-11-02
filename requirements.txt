@@ -31,3 +31,4 @@ tqdm==4.67.1
 typing_extensions==4.15.0
 urllib3==2.5.0
 yt-dlp==2025.10.22
+google-genai==1.47.0

@@ -32,6 +32,7 @@ class AudioQuestionGenerator:
 
         result = model.transcribe(audio_file)
 
+        os.remove(audio_file)
         text_file_path = f"media/{self.file}.txt"
         with open(text_file_path, 'w', encoding='utf-8') as f:
             f.write(result['text'])
