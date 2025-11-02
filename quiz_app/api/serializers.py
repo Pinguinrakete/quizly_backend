@@ -1,26 +1,41 @@
 from rest_framework import serializers
 from quiz_app.models import Quiz, QuizQuestions
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 
-class YoutubeURLSerializer(serializers.ModelSerializer):
+class YoutubeURLSerializer(serializers.Serializer):
     url = serializers.CharField(max_length=255)
 
-    class Meta:
-        model = Quiz
-        fields = ["url"] 
-
-    def validate_url(value):
-        if not value:
+    def validate_url(self, url):
+        if not url:
             raise serializers.ValidationError("URL cannot be empty.")
 
-        parsed_url = urlparse(value)
-        valid_domains = ["youtube.com", "www.youtube.com", "youtu.be", "m.youtube.com"]
+        parsed_url = urlparse(url)
 
+        valid_domains = ["www.youtube.com", "youtube.com", "m.youtube.com", "youtu.be"]
         if parsed_url.netloc not in valid_domains:
-            raise serializers.ValidationError("Invalid YouTube URL.")
+            raise serializers.ValidationError("Invalid YouTube URL domain.")
 
-        return value
+        if parsed_url.netloc == "youtu.be":
+            video_id = parsed_url.path.lstrip("/")
+        else:
+            query_params = parse_qs(parsed_url.query)
+            video_id_list = query_params.get("v")
+            if not video_id_list:
+                raise serializers.ValidationError("No video ID found in URL.")
+            video_id = video_id_list[0]
+
+        clean_query = urlencode({"v": video_id})
+        clean_url = urlunparse((
+            "https",                  # immer https
+            "www.youtube.com",         # saubere Domain
+            "/watch",                  # Pfad
+            '',                        # params
+            clean_query,               # query
+            ''                         # fragment
+        ))
+
+        return clean_url
 
 
 class QuestionSerializer(serializers.ModelSerializer):
