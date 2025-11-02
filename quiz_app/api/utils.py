@@ -9,7 +9,7 @@ CLIENT = genai.Client(api_key=API_KEY)
 
 
 class AudioQuestionGenerator:
-    file = ''
+    file = 'file'
 
     def download_audio(self, url):
         output_path = 'media'
@@ -26,30 +26,37 @@ class AudioQuestionGenerator:
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as audio:
-            info = audio.extract_info(url, download=True) 
+            audio.extract_info(url, download=True) 
             self.file = "file"
-            # self.filename = info['title']
             print(f"✅ Successfully downloaded", self.file)
-
 
     def transcribe_whisper(self):
         device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"🚀 Using device: {device}")
-        model = whisper.load_model("small", device=device)  # "tiny = 75MB", "base = 142MB", "small = 466MB", "medium = 1,5GB", "large = 2,9GB"
+        model = whisper.load_model("small", device=device) 
         audio_file = f"media/{self.file}.wav"
 
         result = model.transcribe(audio_file)
-
+        
+        self.transcript_text = f"text_transcript"
+        text_file_path = f"media/{self.transcript_text}.txt"
         os.remove(audio_file)
-        text_file_path = f"media/{self.file}.txt"
         with open(text_file_path, 'w', encoding='utf-8') as f:
             f.write(result['text'])
 
         print(f"✅ Transcription saved in {text_file_path}")
 
+    def generate_questions_gemini(self):
+        prompt = "Wie macht die Katze? Antworte in einem Satz"
 
-    def generate_questions_gemini(self, text):
         response = CLIENT.models.generate_content(
-            model="gemini-2.5-flash", contents="Explain how AI works in a few words"
+            model="gemini-2.5-flash",
+            contents=prompt,
         )
+
+        self.generated_text = f"generated_text"
+        file_path = f"media/{self.generated_text}.txt"
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(response.text)
+        
         print(response.text)

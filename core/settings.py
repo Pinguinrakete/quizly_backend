@@ -36,7 +36,6 @@ ALLOWED_HOSTS = []
 
 # Example: API Keys
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-GEMINI_API_SECRET = os.getenv('GEMINI_API_SECRET')
 
 # Application definition
 
