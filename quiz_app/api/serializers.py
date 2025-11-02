@@ -27,12 +27,12 @@ class YoutubeURLSerializer(serializers.Serializer):
 
         clean_query = urlencode({"v": video_id})
         clean_url = urlunparse((
-            "https",                  # immer https
-            "www.youtube.com",         # saubere Domain
-            "/watch",                  # Pfad
-            '',                        # params
-            clean_query,               # query
-            ''                         # fragment
+            "https",
+            "www.youtube.com",
+            "/watch",
+            '',
+            clean_query,
+            ''
         ))
 
         return clean_url
