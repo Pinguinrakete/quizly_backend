@@ -41,10 +41,10 @@ class AudioQuestionGenerator:
         audio_file = f"media/{self.audio_track}.wav"
 
         result = model.transcribe(audio_file)
+        # os.remove(audio_file)
         
         self.transcript_text = result['text']
         filename = f"media/{self.transcribed_text}.txt"
-        # os.remove(audio_file)
         self.write_file(filename, self.transcribed_text)
 
         print(f"✅ Transcription saved in {filename}")
@@ -90,6 +90,7 @@ class AudioQuestionGenerator:
         self.generated_text = f"generated_text"
         filename = f"media/{self.generated_text}.txt"
         self.write_file(filename, response.text)
+        # os.remove(transcribed_text)
         
         print(response.text)
 
@@ -99,21 +100,18 @@ class AudioQuestionGenerator:
         
         content = self.read_file(filename)
         content = content.strip()
+        content = self.remove_markdown(content)
         self.write_file(filename, content) 
 
 
-    def remove_markdown(self):
-        filename = f"media/{self.generated_text}.txt"
-        
-        content = self.read_file(filename)
-        
+    def remove_markdown(self, content):      
         if content.startswith("```json"):
             content = content[len("```json "):]
 
         if content.endswith("```"):
             content = content[:-3]
 
-        self.write_file(filename, content) 
+        return content
 
 
     def read_file(self, filename):
@@ -124,5 +122,3 @@ class AudioQuestionGenerator:
     def write_file(self, filename, content):
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(content)
-
-
