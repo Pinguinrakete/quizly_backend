@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from quiz_app.models import Quiz, QuizQuestions
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+import yt_dlp
 
+MAX_VIDEO_DURATION = 15 * 60
 
 class YoutubeURLSerializer(serializers.Serializer):
     url = serializers.CharField(max_length=255)
@@ -24,6 +26,22 @@ class YoutubeURLSerializer(serializers.Serializer):
             if not video_id_list:
                 raise serializers.ValidationError("No video ID found in URL.")
             video_id = video_id_list[0]
+
+        ydl_opts = {
+            'quiet': True,
+            'skip_download': True,
+            'no_warnings': True, 
+            }
+
+        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(video_url, download=False)
+            duration = info.get('duration')
+
+            if duration is None:
+                raise serializers.ValidationError("The length of the video could not be read.")
+            if duration > MAX_VIDEO_DURATION:
+                raise serializers.ValidationError("Video is longer than 15 minutes.")
 
         clean_query = urlencode({"v": video_id})
         clean_url = urlunparse((
