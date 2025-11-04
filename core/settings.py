@@ -32,7 +32,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['http://127.0.0.1:5500','http://localhost:5500']
+
+CORS_ALLOWED_ORIGINS = [
+  'http://127.0.0.1:5500',
+  'http://localhost:5500'
+]
 
 # Example: API Keys
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -40,6 +45,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +53,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders',
     'auth_app',
     'quiz_app',
     'rest_framework_simplejwt',

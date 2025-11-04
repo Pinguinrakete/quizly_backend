@@ -12,6 +12,7 @@ CLIENT = genai.Client(api_key=API_KEY)
 class AudioQuestionGenerator:
     audio_track = 'audio_track'
     transcribed_text = 'transcribed_text'
+    generated_text = 'generated_text'
 
     def download_audio(self, url):
         output_path = 'media'
@@ -32,6 +33,7 @@ class AudioQuestionGenerator:
             self.audio_track = "audio_track"
             print(f"✅ Successfully downloaded", self.audio_track)
 
+
     def transcribe_whisper(self):
         device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"🚀 Using device: {device}")
@@ -40,18 +42,17 @@ class AudioQuestionGenerator:
 
         result = model.transcribe(audio_file)
         
-        self.transcript_text = f"transcribed_text"
-        text_file_path = f"media/{self.transcribed_text}.txt"
+        self.transcript_text = result['text']
+        filename = f"media/{self.transcribed_text}.txt"
         # os.remove(audio_file)
-        with open(text_file_path, 'w', encoding='utf-8') as f:
-            f.write(result['text'])
+        self.write_file(filename, self.transcribed_text)
 
-        print(f"✅ Transcription saved in {text_file_path}")
+        print(f"✅ Transcription saved in {filename}")
+
 
     def generate_questions_gemini(self):
-        load_content = f"media/{self.transcribed_text}.txt"
-        with open(load_content, 'r', encoding='utf-8') as f:
-            transcript = f.read()
+        filename = f"media/{self.transcribed_text}.txt"
+        transcript = self.read_file(filename)
 
         prompt = f"""
             Create a quiz based on the following transcript.
@@ -87,8 +88,41 @@ class AudioQuestionGenerator:
         )
         
         self.generated_text = f"generated_text"
-        file_path = f"media/{self.generated_text}.txt"
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(response.text)
+        filename = f"media/{self.generated_text}.txt"
+        self.write_file(filename, response.text)
         
         print(response.text)
+
+
+    def edge_cleaner_text(self):
+        filename = f"media/{self.generated_text}.txt"
+        
+        content = self.read_file(filename)
+        content = content.strip()
+        self.write_file(filename, content) 
+
+
+    def remove_markdown(self):
+        filename = f"media/{self.generated_text}.txt"
+        
+        content = self.read_file(filename)
+        
+        if content.startswith("```json"):
+            content = content[len("```json "):]
+
+        if content.endswith("```"):
+            content = content[:-3]
+
+        self.write_file(filename, content) 
+
+
+    def read_file(self, filename):
+        with open(filename, 'r', encoding='utf-8') as file:
+            return file.read()
+
+
+    def write_file(self, filename, content):
+        with open(filename, 'w', encoding='utf-8') as file:
+            file.write(content)
+
+
