@@ -26,13 +26,13 @@ class CreateQuizView(APIView):
             generate.transcribe_whisper()
             generate.generate_questions_gemini()
             generate.edge_cleaner_text()
+            generate.delete_transcribed_text()
             
             try:
                 quiz = serializer.create()
                 return Response(CreateQuizSerializer(quiz).data, status=status.HTTP_201_CREATED)
-
-            except Exception as e:
-                return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            finally:
+                generate.delete_generated_text()
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

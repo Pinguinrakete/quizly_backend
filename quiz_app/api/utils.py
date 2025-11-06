@@ -31,7 +31,6 @@ class AudioQuestionGenerator:
         with yt_dlp.YoutubeDL(ydl_opts) as audio:
             audio.extract_info(url, download=True) 
             self.audio_track = "audio_track"
-            print(f"✅ Successfully downloaded", self.audio_track)
 
 
     def transcribe_whisper(self):
@@ -39,7 +38,8 @@ class AudioQuestionGenerator:
         audio_file = f"media/{self.audio_track}.wav"
 
         result = model.transcribe(audio_file)
-        os.remove(audio_file)
+        if os.path.exists(audio_file):
+            os.remove(audio_file)
         
         self.transcript_text = f"transcribed_text"
         text_file_path = f"media/{self.transcribed_text}.txt"
@@ -48,8 +48,8 @@ class AudioQuestionGenerator:
 
 
     def generate_questions_gemini(self):
-        filename = f"media/{self.transcribed_text}.txt"
-        transcript = self.read_file(filename)
+        input_filename = f"media/{self.transcribed_text}.txt"
+        transcript = self.read_file(input_filename)
 
         prompt = f"""
             Create a quiz based on the following transcript.
@@ -86,10 +86,7 @@ class AudioQuestionGenerator:
         
         self.generated_text = f"generated_text"
         filename = f"media/{self.generated_text}.txt"
-        self.write_file(filename, response.text)
-        # os.remove(transcribed_text)
-        
-        print(response.text)
+        self.write_file(filename, response.text)     
 
 
     def edge_cleaner_text(self):
@@ -119,3 +116,13 @@ class AudioQuestionGenerator:
     def write_file(self, filename, content):
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(content)
+
+    
+    def delete_transcribed_text(self):
+        if os.path.exists(f"media/{self.transcribed_text}.txt"):
+            os.remove(f"media/{self.transcribed_text}.txt") 
+
+
+    def delete_generated_text(self):
+        if os.path.exists(f"media/{self.generated_text}.txt"):
+            os.remove(f"media/{self.generated_text}.txt") 
