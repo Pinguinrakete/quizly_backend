@@ -35,9 +35,7 @@ class AudioQuestionGenerator:
 
 
     def transcribe_whisper(self):
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"🚀 Using device: {device}")
-        model = whisper.load_model("small", device=device) 
+        model = whisper.load_model("small", device="cpu") 
         audio_file = f"media/{self.audio_track}.wav"
 
         result = model.transcribe(audio_file)
@@ -47,8 +45,6 @@ class AudioQuestionGenerator:
         text_file_path = f"media/{self.transcribed_text}.txt"
         with open(text_file_path, 'w', encoding='utf-8') as f:
             f.write(result['text'])
-
-        print(f"✅ Transcription saved in {text_file_path}")
 
 
     def generate_questions_gemini(self):

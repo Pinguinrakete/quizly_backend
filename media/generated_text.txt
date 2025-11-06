@@ -1,106 +1,106 @@
 {
-  "title": "Sträters Problemzone Quiz",
-  "description": "A humorous look into Sträter's Problemzone, exploring different types of problems, personal shortcomings, and an amusing anecdote about a misread cream.",
+  "title": "The 'Postamt' Gamer Dad",
+  "description": "A father tries to mask his violent video game hobby as 'Postamt' for his son, leading to humorous and disastrous real-world consequences.",
   "questions": [
     {
-      "question_title": "What is the name of the show/segment being presented?",
+      "question_title": "What video game was the father primarily playing when his son came into the room?",
       "question_options": [
-        "Sträters Lösungswelt",
-        "Sträters Problemzone",
-        "Sträters Tierwelt",
-        "Sträters Denkzone"
+        "Mensch ärgerlich nicht",
+        "Battlefield",
+        "Call of Duty",
+        "Puste, Blume, Umfall"
       ],
-      "answer": "Sträters Problemzone"
+      "answer": "Call of Duty"
     },
     {
-      "question_title": "According to the speaker, what are the two main groups of problems?",
+      "question_title": "How old was the father's son when the events in the story took place?",
       "question_options": [
-        "Financial and emotional problems",
-        "Personal and societal problems",
-        "Homemade and luxury problems",
-        "Big and small problems"
+        "Seven",
+        "Nine",
+        "Eleven",
+        "Thirteen"
       ],
-      "answer": "Homemade and luxury problems"
+      "answer": "Eleven"
     },
     {
-      "question_title": "What animal is mentioned in the speaker's example of a 'Luxusproblem' (luxury problem)?",
+      "question_title": "What specific item of clothing did the father mention wearing while playing the game?",
       "question_options": [
-        "A trained beaver",
-        "A wild bear",
-        "A domestic cat",
-        "A problem bear"
+        "A gaming headset",
+        "Brown velvet camouflage",
+        "A special gaming jacket",
+        "Comfortable pajamas"
       ],
-      "answer": "A trained beaver"
+      "answer": "Brown velvet camouflage"
     },
     {
-      "question_title": "What is the specific 'Luxusproblem' involving this animal?",
+      "question_title": "What did the father tell his son he was playing, instead of the actual game?",
       "question_options": [
-        "It falls into a well",
-        "It gets lost in the forest",
-        "It falls into a scrap press",
-        "It eats all the garden vegetables"
+        "A building simulation",
+        "A post office game (Postamt)",
+        "An animal care game",
+        "A farming simulator"
       ],
-      "answer": "It falls into a scrap press"
+      "answer": "A post office game (Postamt)"
     },
     {
-      "question_title": "How does the speaker describe his own ability to deal with problems?",
+      "question_title": "When the father shot an opponent, how did he explain this action to his son?",
       "question_options": [
-        "He's excellent at solving his own problems",
-        "He's good at solving others' problems but not his own",
-        "He's bad at solving any problems",
-        "He can only identify his own problems"
+        "He was delivering a package.",
+        "He was performing a medical check-up.",
+        "He was giving a high-five.",
+        "He was playing a game of tag."
       ],
-      "answer": "He's good at solving others' problems but not his own"
+      "answer": "He was delivering a package."
     },
     {
-      "question_title": "What is the Wikipedia definition of a 'Problembär' (problem bear) mentioned in the transcript?",
+      "question_title": "What was the name the father gave for one of his 'friends' in the game, who was actually an opponent?",
       "question_options": [
-        "A bear that lives in an apartment",
-        "A bear that attacks humans randomly",
-        "A wild bear with human-undesired behavior patterns",
-        "A bear that has no knowledge of animals"
+        "Klaus",
+        "Dieter",
+        "Udo",
+        "Peter"
       ],
-      "answer": "A wild bear with human-undesired behavior patterns"
+      "answer": "Udo"
     },
     {
-      "question_title": "What does the speaker confess about his knowledge of animals?",
+      "question_title": "When a dog-like figure appeared on screen, what did the father tell his son it was?",
       "question_options": [
-        "He has extensive knowledge of all animals",
-        "He knows a little about specific animals",
-        "He has zero knowledge of animals",
-        "He is an expert in animal behavior"
+        "A guard dog named Rex",
+        "A stray animal needing help",
+        "A friendly dog being stroked, named Lassi",
+        "A robotic pet"
       ],
-      "answer": "He has zero knowledge of animals"
+      "answer": "A friendly dog being stroked, named Lassi"
     },
     {
-      "question_title": "Besides animal knowledge, what other 'Kernproblem' (core problem) does the speaker admit to having?",
+      "question_title": "What did the father claim the 'soup that was splattering' (which looked like blood) was on the screen?",
       "question_options": [
-        "He is too quiet and doesn't share thoughts",
-        "He engages deeply with all topics",
-        "He shares senseless thoughts and engages superficially with things",
-        "He only shares meaningful thoughts"
+        "Paint",
+        "Tomato sauce",
+        "Strawberry jam",
+        "Red-colored slime"
       ],
-      "answer": "He shares senseless thoughts and engages superficially with things"
+      "answer": "Strawberry jam"
     },
     {
-      "question_title": "What misunderstanding did the speaker have regarding the expensive cream he bought?",
+      "question_title": "How did the father explain the act of 'vaccinating' a group of armed opponents to his son?",
       "question_options": [
-        "He thought it would make him invisible",
-        "He thought it would activate 'Kollegen' (colleagues) instead of 'Collagen'",
-        "He thought it was a food item",
-        "He thought it would attract animals"
+        "He was teaching them dance moves.",
+        "He was giving them flu shots.",
+        "He was giving them group therapy.",
+        "He was inviting them for a meal."
       ],
-      "answer": "He thought it would activate 'Kollegen' (colleagues) instead of 'Collagen'"
+      "answer": "He was giving them flu shots."
     },
     {
-      "question_title": "At the end of the segment, what is the status of the scrap press and the beaver from the luxury problem example?",
+      "question_title": "What was the unfortunate consequence that followed the father's gaming session and explanations?",
       "question_options": [
-        "The scrap press was on and the beaver is fine",
-        "The scrap press was off and the beaver is fine",
-        "The scrap press was on and the beaver is not well",
-        "The scrap press was off and the beaver is 'so lala' (so-so)"
+        "The son started playing Call of Duty as well.",
+        "The son demanded his own gaming PC.",
+        "The son threw a jar of jam at his art teacher.",
+        "The son created his own 'Postamt' game at home."
       ],
-      "answer": "The scrap press was off and the beaver is 'so lala' (so-so)"
+      "answer": "The son threw a jar of jam at his art teacher."
     }
   ]
 }
