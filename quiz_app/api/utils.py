@@ -41,13 +41,14 @@ class AudioQuestionGenerator:
         audio_file = f"media/{self.audio_track}.wav"
 
         result = model.transcribe(audio_file)
-        # os.remove(audio_file)
+        os.remove(audio_file)
         
-        self.transcript_text = result['text']
-        filename = f"media/{self.transcribed_text}.txt"
-        self.write_file(filename, self.transcribed_text)
+        self.transcript_text = f"transcribed_text"
+        text_file_path = f"media/{self.transcribed_text}.txt"
+        with open(text_file_path, 'w', encoding='utf-8') as f:
+            f.write(result['text'])
 
-        print(f"✅ Transcription saved in {filename}")
+        print(f"✅ Transcription saved in {text_file_path}")
 
 
     def generate_questions_gemini(self):
@@ -102,7 +103,7 @@ class AudioQuestionGenerator:
         content = content.strip()
         content = self.remove_markdown(content)
         self.write_file(filename, content) 
-
+        return content
 
     def remove_markdown(self, content):      
         if content.startswith("```json"):

@@ -1,7 +1,10 @@
 from rest_framework import serializers
+from rest_framework import status
+from rest_framework.response import Response
 from quiz_app.models import Quiz, QuizQuestions
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
-import yt_dlp
+import yt_dlp, json
+from django.contrib.auth.models import User
 
 MAX_VIDEO_DURATION = 15 * 60
 
@@ -34,6 +37,7 @@ class YoutubeURLSerializer(serializers.Serializer):
             }
 
         video_url = f"https://www.youtube.com/watch?v={video_id}"
+        
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             duration = info.get('duration')
@@ -54,6 +58,50 @@ class YoutubeURLSerializer(serializers.Serializer):
         ))
 
         return clean_url
+
+    def create(self):
+        filename = "media/generated_text.txt"
+
+        try:
+            with open(filename, 'r', encoding='utf-8') as file:
+                content = json.load(file)
+
+            title = content.get("title")
+            description = content.get("description")
+            questions_data = content.get("questions", [])
+
+            if not title or not questions_data:
+                raise serializers.ValidationError(
+                    "JSON must contain at least 'title' and 'questions'."
+                )
+
+            request = self.context.get('request')
+            owner = request.user if request and request.user.is_authenticated else User.objects.first()
+
+            clean_url = self.validated_data['url']
+
+            quiz = Quiz.objects.create(
+                owner=owner,
+                title=title,
+                description=description,
+                video_url=clean_url
+            )
+
+            for q in questions_data:
+                question = QuizQuestions.objects.create(
+                    question_title=q.get("question_title"),
+                    question_options=q.get("question_options", []),
+                    answer=q.get("answer")
+                )
+                quiz.questions.add(question)
+
+            quiz.save()
+            return quiz  
+
+        except json.JSONDecodeError:
+            raise serializers.ValidationError("File does not contain valid JSON.")
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
 
 
 class QuestionSerializer(serializers.ModelSerializer):

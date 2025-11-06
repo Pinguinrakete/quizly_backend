@@ -1,5 +1,6 @@
 from .permissions import IsOwner
 from .serializers import YoutubeURLSerializer, CreateQuizSerializer, QuizSinglePatchSerializer
+from .utils import AudioQuestionGenerator
 from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework import status
@@ -18,11 +19,18 @@ class CreateQuizView(APIView):
     def post(self, request):
         serializer = YoutubeURLSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
+            url = serializer.validated_data['url']
+
+            generate = AudioQuestionGenerator()
+            generate.download_audio(url)
+            generate.transcribe_whisper()
+            generate.generate_questions_gemini()
+            generate.edge_cleaner_text()
+            
             try:
-                print('Hello World!!!')
-                # quiz = serializer.save()
-                return Response({"detail": "Es funktioniert ..."}, status=status.HTTP_201_CREATED)
-                # return Response(CreateQuizSerializer(quiz).data, status=status.HTTP_201_CREATED)
+                quiz = serializer.create()
+                return Response(CreateQuizSerializer(quiz).data, status=status.HTTP_201_CREATED)
+
             except Exception as e:
                 return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
