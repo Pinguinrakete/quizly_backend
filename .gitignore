@@ -18,3 +18,6 @@ env/
 
 # Environment variables
 .env
+
+# Media files
+media/
