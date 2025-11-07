@@ -1,5 +1,5 @@
 from .permissions import IsOwner
-from .serializers import YoutubeURLSerializer, CreateQuizSerializer, QuizSinglePatchSerializer
+from .serializers import YoutubeURLSerializer, CreateQuizSerializer, MyQuizzesSerializer, QuizSinglePatchSerializer
 from .utils import AudioQuestionGenerator
 from django.contrib.auth.models import User
 from rest_framework import generics
@@ -58,10 +58,16 @@ class CreateQuizView(APIView):
 class MyQuizzesView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
-    serializer_class = CreateQuizSerializer
 
-    def get_queryset(self):
-        return Quiz.objects.filter(owner=self.request.user)
+    def get(self, request, *args, **kwargs):
+        try:
+            quiz = Quiz.objects.filter(owner=self.request.user)
+            serializer = MyQuizzesSerializer(quiz, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        except Exception as e:
+            return Response({'detail': {str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class QuizSingleView(APIView):
@@ -101,3 +107,12 @@ class QuizSingleView(APIView):
         quiz.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+
+
+        #         serializer = OfferListSingleSerializer(offer, context={'request': request})
+        #     return Response(serializer.data, status=status.HTTP_200_OK)
+        # except Offer.DoesNotExist:
+        #     return Response({'error': 'Offer not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # except Exception as e:
+        #     return Response({'error': f'Unexpected error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

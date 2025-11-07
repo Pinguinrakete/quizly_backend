@@ -1,4 +1,4 @@
-import torch, os, yt_dlp, whisper
+import os, yt_dlp, whisper
 from google import genai
 from dotenv import load_dotenv
 

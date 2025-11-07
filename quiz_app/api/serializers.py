@@ -127,6 +127,29 @@ class CreateQuizSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
 
 
+class QuestionForQuizzesSerializer(serializers.ModelSerializer):
+    question_options = serializers.ListField(child=serializers.CharField(max_length=255), required=False, default=list)
+
+    class Meta:
+        model = QuizQuestions
+        fields = ['id', 'question_title','question_options', 'answer']
+        read_only_fields = ['id', 'question_title','question_options', 'answer']
+
+    def validate_question_options(self, value):
+        if len(value) != 4:
+            raise serializers.ValidationError("Each question must have exactly 4 answer options.")
+        return value
+    
+
+class MyQuizzesSerializer(serializers.ModelSerializer):
+    questions = QuestionForQuizzesSerializer(many=True) 
+
+    class Meta:
+        model = Quiz
+        fields = ['id', 'title','description', 'created_at', 'updated_at', 'video_url', 'questions']
+        read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+
+
 class QuizSinglePatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
