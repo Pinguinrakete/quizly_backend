@@ -12,9 +12,8 @@ from quiz_app.models import Quiz
 
 
 class CreateQuizView(APIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated, IsOwner]
-    permission_classes = [AllowAny]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsOwner]
     
     def post(self, request):
         serializer = YoutubeURLSerializer(data=request.data, context={'request': request})
@@ -22,12 +21,31 @@ class CreateQuizView(APIView):
             url = serializer.validated_data['url']
 
             generate = AudioQuestionGenerator()
-            generate.download_audio(url)
-            generate.transcribe_whisper()
-            generate.generate_questions_gemini()
-            generate.edge_cleaner_text()
-            generate.delete_transcribed_text()
+            try:
+                generate.download_audio(url)
+            except Exception as e:
+                return Response({"detail": f"Audio download failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+            try:
+                generate.transcribe_whisper()
+            except Exception as e:
+                return Response({"detail": f"Whisper transcription failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            try:
+                generate.generate_questions_gemini()
+            except Exception as e:
+                return Response({"detail": f"Generating questions with Gemini failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            try:
+                generate.edge_cleaner_text()
+            except Exception as e:
+                return Response({"detail": f"Cleaning text ending failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            try:
+                generate.delete_transcribed_text()
+            except Exception as e:
+                return Response({"detail": f"Deleting transcribed text failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+               
             try:
                 quiz = serializer.create()
                 return Response(CreateQuizSerializer(quiz).data, status=status.HTTP_201_CREATED)
