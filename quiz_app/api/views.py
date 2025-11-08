@@ -74,6 +74,19 @@ class CreateQuizView(APIView):
 
 
 class MyQuizzesView(generics.ListAPIView):
+    """
+    Retrieve all quizzes created by the authenticated user.
+
+    Returns a list of quizzes owned by the currently authenticated user.
+    Each quiz includes serialized details such as title, questions, and 
+    creation metadata.
+
+    Returns:
+        - 200 OK: Successfully retrieved the user's quizzes.
+        - 500 Internal Server Error: If an unexpected error occurs while fetching data.
+
+    Requires JWT authentication and ownership permissions.
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
