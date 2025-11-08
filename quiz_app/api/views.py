@@ -1,9 +1,8 @@
-from .permissions import IsOwner
+from .permissions import IsOwner, HeaderOrCookieJWTAuthentication
 from .serializers import YoutubeURLSerializer, CreateQuizSerializer, MyQuizzesSerializer, QuizSinglePatchSerializer
 from .utils import AudioQuestionGenerator
 from django.contrib.auth.models import User
-from rest_framework import generics
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -12,6 +11,25 @@ from quiz_app.models import Quiz
 
 
 class CreateQuizView(APIView):
+    """
+    Create a quiz from a YouTube video URL.
+
+    Authenticated users can submit a YouTube URL to automatically 
+    generate a quiz. The view handles multiple processing steps:
+    - Downloads the audio from the YouTube video.
+    - Transcribes the audio using Whisper.
+    - Generates quiz questions using the Gemini model.
+    - Cleans up and refines the generated text.
+    - Deletes temporary transcription and generation files.
+
+    Returns:
+        - 201 Created: Successfully generated and saved the quiz.
+        - 400 Bad Request: Validation errors in the submitted data.
+        - 500 Internal Server Error: If any processing step (audio download, 
+          transcription, question generation, or cleanup) fails.
+
+    Requires JWT authentication and that the user is the resource owner.
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
     
