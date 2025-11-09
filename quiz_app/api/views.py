@@ -1,7 +1,6 @@
-from .permissions import IsOwner, HeaderOrCookieJWTAuthentication
+from .permissions import IsOwner
 from .serializers import YoutubeURLSerializer, CreateQuizSerializer, MyQuizzesSerializer, QuizSinglePatchSerializer
 from .utils import AudioQuestionGenerator
-from django.contrib.auth.models import User
 from django.db import DatabaseError
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -105,19 +104,18 @@ class MyQuizzesView(generics.ListAPIView):
 
 class QuizSingleView(APIView):
     """
-    Retrieve a single quiz by its ID.
+    Retrieve, update, or delete a quiz by its ID.
 
-    Returns detailed information about the specified quiz owned by the 
-    authenticated user.
+    Only the authenticated owner can access this endpoint.
+    Requires JWT authentication.
 
     Responses:
-        - 200 OK: Quiz retrieved successfully.
-        - 401 Unauthorized: Authentication credentials were not provided or are invalid.
-        - 403 Forbidden: User does not have permission to access this quiz.
-        - 404 Not Found: Quiz does not exist.
-        - 500 Internal Server Error: Unexpected error occurred.
-
-    Requires JWT authentication and ownership permission.
+        - 200 OK: Quiz retrieved or updated successfully.
+        - 204 No Content: Quiz deleted successfully.
+        - 400 Bad Request: Invalid data.
+        - 401 Unauthorized / 403 Forbidden: Access denied.
+        - 404 Not Found: Quiz not found.
+        - 500 Internal Server Error: Unexpected error.
     """
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
@@ -134,14 +132,14 @@ class QuizSingleView(APIView):
 
     def patch(self, request, pk):
         try:
-            order = Quiz.objects.get(pk=pk)
+            quiz = Quiz.objects.get(id=pk)
         except Quiz.DoesNotExist:
             return Response({"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = QuizSinglePatchSerializer(order, data=request.data, partial=True, context={'request': request})
+        serializer = QuizSinglePatchSerializer(quiz, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             quiz = serializer.save()
-            return Response(CreateQuizSerializer(quiz, context={'request': request}).data)
+            return Response(MyQuizzesSerializer(quiz, context={'request': request}).data)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
