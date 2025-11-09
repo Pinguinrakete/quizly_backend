@@ -9,6 +9,34 @@ from django.contrib.auth.models import User
 MAX_VIDEO_DURATION = 15 * 60
 
 class YoutubeURLSerializer(serializers.Serializer):
+    """
+    Serializer for validating and processing YouTube video URLs.
+
+    This serializer ensures that the provided URL belongs to a valid YouTube domain,
+    extracts the video ID, checks the video's duration using `yt_dlp`,
+    and ensures it does not exceed the maximum allowed length.
+
+    Upon successful validation, the `create()` method reads a generated JSON file
+    containing quiz data (title, description, and questions), and creates a
+    corresponding `Quiz` instance with related `QuizQuestions`.
+
+    Fields:
+        - url (str): The YouTube video URL to validate.
+
+    Validation:
+        - URL must not be empty.
+        - Must belong to a recognized YouTube domain (e.g. youtube.com, youtu.be).
+        - Must contain a valid video ID.
+        - Video duration must be readable and not exceed 15 minutes.
+
+    Methods:
+        - validate_url(url): Validates and normalizes the provided YouTube URL.
+        - create(): Reads quiz data from JSON and creates a `Quiz` with questions.
+
+    Raises:
+        - serializers.ValidationError: If the URL or JSON data is invalid, or
+          if the video is too long or cannot be processed.
+    """
     url = serializers.CharField(max_length=255)
 
     def validate_url(self, url):
@@ -105,6 +133,14 @@ class YoutubeURLSerializer(serializers.Serializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for `QuizQuestions`.
+
+    Ensures each question has exactly 4 answer options.
+    
+    Fields:
+        - id, question_title, question_options, answer, created_at, updated_at
+    """
     question_options = serializers.ListField(child=serializers.CharField(max_length=255), required=False, default=list)
 
     class Meta:
@@ -119,6 +155,14 @@ class QuestionSerializer(serializers.ModelSerializer):
     
 
 class CreateQuizSerializer(serializers.ModelSerializer):
+    """
+    Serializer for `Quiz` objects with related questions.
+
+    Includes nested `QuestionSerializer` for handling quiz questions.
+
+    Fields:
+        - id, title, description, created_at, updated_at, video_url, questions
+    """
     questions = QuestionSerializer(many=True) 
 
     class Meta:
@@ -128,6 +172,14 @@ class CreateQuizSerializer(serializers.ModelSerializer):
 
 
 class QuestionForQuizzesSerializer(serializers.ModelSerializer):
+    """
+    Serializer for `QuizQuestions` used in quizzes.
+
+    Ensures exactly 4 answer options per question.
+
+    Fields:
+        - id, question_title, question_options, answer
+    """
     question_options = serializers.ListField(child=serializers.CharField(max_length=255), required=False, default=list)
 
     class Meta:
@@ -142,6 +194,14 @@ class QuestionForQuizzesSerializer(serializers.ModelSerializer):
     
 
 class MyQuizzesSerializer(serializers.ModelSerializer):
+    """
+    Serializer for `Quiz` with nested questions.
+
+    Uses `QuestionForQuizzesSerializer` for quiz questions.
+
+    Fields:
+        - id, title, description, created_at, updated_at, video_url, questions
+    """
     questions = QuestionForQuizzesSerializer(many=True) 
 
     class Meta:
@@ -151,6 +211,14 @@ class MyQuizzesSerializer(serializers.ModelSerializer):
 
 
 class QuizSinglePatchSerializer(serializers.ModelSerializer):
+    """
+    Serializer for partially updating a `Quiz`.
+
+    Allows updating the `title` field only.
+
+    Fields:
+        - title
+    """
     class Meta:
         model = Quiz
         fields = ['title']
