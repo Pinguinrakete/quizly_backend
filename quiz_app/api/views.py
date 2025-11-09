@@ -103,6 +103,21 @@ class MyQuizzesView(generics.ListAPIView):
 
 
 class QuizSingleView(APIView):
+    """
+    Retrieve a single quiz by its ID.
+
+    Returns detailed information about the specified quiz owned by the 
+    authenticated user.
+
+    Responses:
+        - 200 OK: Quiz retrieved successfully.
+        - 401 Unauthorized: Authentication credentials were not provided or are invalid.
+        - 403 Forbidden: User does not have permission to access this quiz.
+        - 404 Not Found: Quiz does not exist.
+        - 500 Internal Server Error: Unexpected error occurred.
+
+    Requires JWT authentication and ownership permission.
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
