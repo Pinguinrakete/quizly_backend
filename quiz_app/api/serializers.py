@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.response import Response
 from quiz_app.models import Quiz, QuizQuestions
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 import yt_dlp, json
