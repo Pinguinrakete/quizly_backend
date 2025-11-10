@@ -26,7 +26,25 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • Whisper            |    Transcribe the audio into text.
     • KI Gemini Flash    |    Generate questions and answers from the text.
 # ![Installation Icon](assets/icons/installation.png) Installation
-## 1. Clone the repository:
+# Windows 10/11
+## 1. Check or install Python 3.11.9
+Check if your Python version is 3.11.9, opening PowerShell or CMD and typing:
+``` bash 
+ python --version
+ ``` 
+If you have a different version, install version 3.11.9. <br> 
+If winget is installed, open PowerShell or CMD and type:
+``` bash 
+winget install --id Python.Python.3.11 --version 3.11.9
+``` 
+If winget is not installed: <br>
+Installed from https://www.python.org/downloads/<br><br>
+
+Check all installed Python Versions
+``` bash 
+ py -0
+ ``` 
+## 4. Clone the repository:
 ```bash
 git clone https://https://github.com/Pinguinrakete/quizly_backend.git .
 ```   
