@@ -204,7 +204,7 @@ class MyQuizzesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quiz
-        fields = ['id', 'title','description', 'created_at', 'updated_at', 'video_url', 'questions']
+        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
         read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
 
 
@@ -217,7 +217,8 @@ class QuizSinglePatchSerializer(serializers.ModelSerializer):
     Fields:
         - title
     """
+    questions = QuestionForQuizzesSerializer(many=True) 
     class Meta:
         model = Quiz
-        fields = ['title']
-        read_only_fields = ['id', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+        fields = ['title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+        read_only_fields = ['id']
