@@ -217,8 +217,7 @@ class QuizSinglePatchSerializer(serializers.ModelSerializer):
     Fields:
         - title
     """
-    questions = QuestionForQuizzesSerializer(many=True) 
     class Meta:
         model = Quiz
         fields = ['title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'video_url', 'questions']
