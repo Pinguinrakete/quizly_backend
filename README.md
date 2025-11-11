@@ -27,7 +27,7 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • KI Gemini Flash    |    Generate questions and answers from the text.
 # ![Installation Icon](assets/icons/installation.png) Installation
 # Windows 10/11
-## 1. Python 3.11.9
+### 1. Python 3.11.9
 Check if your Python version is 3.11.9, opening PowerShell or CMD and typing:
 ``` bash 
  py --version
@@ -44,7 +44,7 @@ Check all installed Python Versions
 ``` bash 
  py -0
  ``` 
- ## 2. FFMPEG - Video encoder
+ ### 2. FFMPEG - Video encoder
 Check if FFMPEG is installed by opening PowerShell or CMD and typing:
 ``` bash 
  FFMPEG -version
@@ -52,23 +52,23 @@ Check if FFMPEG is installed by opening PowerShell or CMD and typing:
 If winget is installed, open PowerShell or CMD and type:
 ``` bash 
 winget install --id Gyan.FFmpeg -e --source winget
-
 ```
 If winget is not installed: <br>
-Download the latest FFmpeg build: https://ffmpeg.org/download.html <br>
- Windows builds (usually from gyan.dev or BtbN).
+&nbsp;&nbsp;Download the latest FFmpeg build: https://ffmpeg.org/download.html <br>
+&nbsp;&nbsp;Windows builds (usually from gyan.dev or BtbN).
 <br><br>
 Unpack the ZIP file, e.g., to C:\ffmpeg<br>
-Go to the bin folder → ffmpeg.exe is located there. <br>Add the bin path to the environment variables:<br>
+&nbsp;&nbsp;Go to the bin folder → ffmpeg.exe is located there. <br>
+Add the bin path to the environment variables:<br>
 &nbsp;•&nbsp;Right-click on 'This PC' → 'Properties' → 'Advanced system settings'.<br>
 &nbsp;•&nbsp;Click 'Environment Variables...' → add the entry C:\ffmpeg\bin to the Path.
 
-## 3. Clone the repository:
+### 3. Clone the repository:
 ```bash
 git clone https://https://github.com/Pinguinrakete/quizly_backend.git .
 ```   
 
-## 4. Create a virtual environment to isolate our package dependencies locally
+### 4. Create a virtual environment to isolate our package dependencies locally
 ```bash
 py -3.11 -m venv env   
 ``` 
@@ -76,25 +76,37 @@ py -3.11 -m venv env
 ```bash
 .\env\Scripts\activate
 ```  
-## 5. Update pip
+### 5. Update pip
 ```bash
 python -m pip install --upgrade pip
 ``` 
-## 6. Install dependencies
+### 6. Install dependencies
 ```bash
 pip install -r requirements.txt 
 ``` 
+### 7. Migrations are applied to the database.
+```bash
+python manage.py migrate
+```
+### 8. Start the server.
+```bash
+python manage.py runserver
+```
+## ![API Endpoints Icon](assets/icons//api.png) API Endpoint Documentation
+### ![Authentication Icon](assets/icons/authentication.png) Authentication 
 
-<br><br><br>
-### Authentication
-POST &nbsp;&nbsp;&nbsp;/api/auth/register/<br>
-POST &nbsp;&nbsp;&nbsp;/api/auth/login/<br>
-POST &nbsp;&nbsp;&nbsp;/api/auth/token/refresh/<br>
-POST &nbsp;&nbsp;&nbsp;/api/auth/logout/
+| Method | Endpoint                 | Description                                       |
+|--------|--------------------------|---------------------------------------------------|
+| POST   | /api/auth/register/      | Registers a new user                              |
+| POST   | /api/auth/login/         | Confirms identity and returns JWT tokens          |
+| POST   | /api/auth/token/refresh/ | Refreshes expired authentication tokens for users |
+| POST   | /api/auth/logout/        | Logs user out and clears session data             |
 
-### Quiz Management
-POST &nbsp;&nbsp;&nbsp;/api/createQuiz/<br>
-GET &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/api/quizzes/<br>
-GET &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/api/quizzes/{id}<br>
-PATCH &nbsp;&nbsp;/api/quizzes/{id}<br>
-DELETE &nbsp;/api/quizzes/{id}
+### ![Quiz Icon](assets/icons/quiz.png) Quiz Management
+| Method | Endpoint          | Description                                     |
+|--------|-------------------|-------------------------------------------------|
+| POST   | /api/createQuiz/  | Creates a new quiz from a YouTube URL.          |
+| GET    | /api/quizzes/     | Fetches all quizzes of the authenticated user   |
+| GET    | /api/quizzes/{id} | Retrieves a specific quiz of the user           |
+| PATCH  | /api/quizzes/{id} | Updates specific fields of a quiz.              |
+| DELETE | /api/quizzes/{id} | Deletes a quiz along with all related questions |
