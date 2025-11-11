@@ -21,10 +21,10 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • Python 3.11.9
     • Django 5.2.7
     • Django REST Framework 3.16.1
-    • SQLite3            |    Database
-    • yt-dlp             |    Download the audio from the video.
-    • Whisper            |    Transcribe the audio into text.
-    • KI Gemini Flash    |    Generate questions and answers from the text.
+    • SQLite3                |    Database
+    • yt-dlp                 |    Download the audio from the video.
+    • Whisper                |    Transcribe the audio into text.
+    • AI gemini-2.5-flash    |    Generate questions and answers from the text.
 # ![Installation Icon](assets/icons/installation.png) Installation
 # Windows 10/11
 ### 1. Python 3.11.9
@@ -88,7 +88,26 @@ pip install -r requirements.txt
 ```bash
 python manage.py migrate
 ```
-### 8. Start the server.
+### 8. Generate a Gemini API-Key for model "gemini-2.5-flash"
+```bash
+1. Sign to your Google Cloud account.
+
+2. Navigate to the API & Services → Credentials section.
+
+3. Click Create Credentials → API Key.
+
+4. Copy the generated key.
+
+5. Use this key to authenticate requests to the gemini-2.5-flash model.
+```
+### 9. Creating and filling a .env
+```bash
+Please rename the .env.template to .env and set all necessary environment variables.
+
+Generate a SCRET_KEY, please open the PowerShell:
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+### 10. Start the server.
 ```bash
 python manage.py runserver
 ```
@@ -110,3 +129,6 @@ python manage.py runserver
 | GET    | /api/quizzes/{id} | Retrieves a specific quiz of the user           |
 | PATCH  | /api/quizzes/{id} | Updates specific fields of a quiz.              |
 | DELETE | /api/quizzes/{id} | Deletes a quiz along with all related questions |
+
+### ![Quiz Icon](assets/icons/quiz.png) License
+The license is under the MIT License.
