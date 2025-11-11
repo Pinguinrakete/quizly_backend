@@ -86,6 +86,7 @@ pip install -r requirements.txt
 ``` 
 ### 7. Migrations are applied to the database.
 ```bash
+python.exe manage.py makemigrations
 python manage.py migrate
 ```
 ### 8. Generate a Gemini API-Key for model "gemini-2.5-flash"
