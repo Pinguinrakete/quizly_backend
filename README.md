@@ -27,10 +27,10 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • KI Gemini Flash    |    Generate questions and answers from the text.
 # ![Installation Icon](assets/icons/installation.png) Installation
 # Windows 10/11
-## 1. Check or install Python 3.11.9
+## 1. Python 3.11.9
 Check if your Python version is 3.11.9, opening PowerShell or CMD and typing:
 ``` bash 
- python --version
+ py --version
  ``` 
 If you have a different version, install version 3.11.9. <br> 
 If winget is installed, open PowerShell or CMD and type:
@@ -44,7 +44,7 @@ Check all installed Python Versions
 ``` bash 
  py -0
  ``` 
- ## 2. Check or install FFMPEG
+ ## 2. FFMPEG - Video encoder
 Check if FFMPEG is installed by opening PowerShell or CMD and typing:
 ``` bash 
  FFMPEG -version
@@ -68,17 +68,23 @@ Go to the bin folder → ffmpeg.exe is located there. <br>Add the bin path to th
 git clone https://https://github.com/Pinguinrakete/quizly_backend.git .
 ```   
 
-
-
-
-## 2. Create a virtual environment to isolate our package dependencies locally
+## 4. Create a virtual environment to isolate our package dependencies locally
 ```bash
-python -m venv env
+py -3.11 -m venv env   
 ``` 
 ### Windows
 ```bash
 .\env\Scripts\activate
 ```  
+## 5. Update pip
+```bash
+python -m pip install --upgrade pip
+``` 
+## 6. Install dependencies
+```bash
+pip install -r requirements.txt 
+``` 
+
 <br><br><br>
 ### Authentication
 POST &nbsp;&nbsp;&nbsp;/api/auth/register/<br>
