@@ -30,16 +30,14 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').upper() == 'TRUE'
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 CORS_ALLOWED_ORIGINS = [
   'http://127.0.0.1:5500',
   'http://localhost:5500'
 ]
-
-# Example: API Keys
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # Application definition

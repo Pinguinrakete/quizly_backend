@@ -44,10 +44,33 @@ Check all installed Python Versions
 ``` bash 
  py -0
  ``` 
-## 4. Clone the repository:
+ ## 2. Check or install FFMPEG
+Check if FFMPEG is installed by opening PowerShell or CMD and typing:
+``` bash 
+ FFMPEG -version
+ ``` 
+If winget is installed, open PowerShell or CMD and type:
+``` bash 
+winget install --id Gyan.FFmpeg -e --source winget
+
+```
+If winget is not installed: <br>
+Download the latest FFmpeg build: https://ffmpeg.org/download.html <br>
+ Windows builds (usually from gyan.dev or BtbN).
+<br><br>
+Unpack the ZIP file, e.g., to C:\ffmpeg<br>
+Go to the bin folder → ffmpeg.exe is located there. <br>Add the bin path to the environment variables:<br>
+&nbsp;•&nbsp;Right-click on 'This PC' → 'Properties' → 'Advanced system settings'.<br>
+&nbsp;•&nbsp;Click 'Environment Variables...' → add the entry C:\ffmpeg\bin to the Path.
+
+## 3. Clone the repository:
 ```bash
 git clone https://https://github.com/Pinguinrakete/quizly_backend.git .
 ```   
+
+
+
+
 ## 2. Create a virtual environment to isolate our package dependencies locally
 ```bash
 python -m venv env
@@ -56,7 +79,7 @@ python -m venv env
 ```bash
 .\env\Scripts\activate
 ```  
-
+<br><br><br>
 ### Authentication
 POST &nbsp;&nbsp;&nbsp;/api/auth/register/<br>
 POST &nbsp;&nbsp;&nbsp;/api/auth/login/<br>
