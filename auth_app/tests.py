@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.test import APITestCase
-from django.contrib.auth.models import User
 
 
 class RegisterViewTests(APITestCase):
@@ -147,3 +148,49 @@ class CookieTokenObtainPairViewTests(APITestCase):
             response.data['password'][0],
             'This field is required.'
         )
+
+
+class CookieTokenRefreshViewTest(APITestCase):
+    def setUp(self):
+        # Create a test user
+        self.user = User.objects.create_user(username="testuser", password="testpass123")
+        self.url = reverse("token_refresh")
+
+        # Generate refresh and access tokens for the test user
+        refresh = RefreshToken.for_user(self.user)
+        self.refresh_token = str(refresh)
+        self.access_token = str(refresh.access_token)
+
+    def test_refresh_token_success(self):
+        # Set the refresh token in the cookie
+        self.client.cookies["refresh_token"] = self.refresh_token
+
+        response = self.client.post(self.url)
+
+        # Check that the response is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Check that the response contains the new access token
+        self.assertIn("access", response.data)
+        self.assertEqual(response.data["message"], "Token refreshed")
+
+        # Check that the access_token cookie is set correctly
+        self.assertIn("access_token", response.cookies)
+        self.assertEqual(response.cookies["access_token"].value, response.data["access"])
+
+    def test_refresh_token_missing(self):
+        # No cookie set, simulate missing refresh token
+        response = self.client.post(self.url)
+
+        # Expect 401 Unauthorized
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data["detail"], "Refresh token invalid!")
+
+    def test_refresh_token_invalid(self):
+        # Set an invalid refresh token
+        self.client.cookies["refresh_token"] = "invalidtoken"
+
+        response = self.client.post(self.url)
+
+        # Expect 401 Unauthorized
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data["detail"], "Refresh token invalid!")
