@@ -194,3 +194,55 @@ class CookieTokenRefreshViewTest(APITestCase):
         # Expect 401 Unauthorized
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data["detail"], "Refresh token invalid!")
+
+
+class LogoutViewTest(APITestCase):
+    def setUp(self):
+        # Create a test user
+        self.user = User.objects.create_user(username="testuser", password="password123")
+        self.url = reverse('logout')
+
+    def test_logout_with_valid_refresh_token(self):
+        # Generate refresh and access tokens for the user
+        refresh = RefreshToken.for_user(self.user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        # Set the refresh token in cookies
+        self.client.cookies['refresh_token'] = refresh_token
+        # Set the access token in the Authorization header
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        # Send POST request to logout endpoint
+        response = self.client.post(self.url)
+
+        # Assert that the response status is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['detail'], "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid.")
+
+        # Assert that cookies are deleted
+        self.assertIn('refresh_token', response.cookies)
+        self.assertEqual(response.cookies['refresh_token'].value, '')
+        self.assertIn('access_token', response.cookies)
+        self.assertEqual(response.cookies['access_token'].value, '')
+
+    def test_logout_without_refresh_token(self):
+        # Generate an access token for authentication
+        refresh = RefreshToken.for_user(self.user)
+        access_token = str(refresh.access_token)
+
+        # Set only the access token, no refresh token cookie
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        # Send POST request to logout endpoint
+        response = self.client.post(self.url)
+
+        # Assert that the response status is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['detail'], "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid.")
+
+        # Assert that cookies are deleted even if there was no refresh token
+        self.assertIn('refresh_token', response.cookies)
+        self.assertEqual(response.cookies['refresh_token'].value, '')
+        self.assertIn('access_token', response.cookies)
+        self.assertEqual(response.cookies['access_token'].value, '')
