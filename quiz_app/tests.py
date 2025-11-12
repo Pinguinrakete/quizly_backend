@@ -3,6 +3,8 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from unittest.mock import patch, MagicMock
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from quiz_app.models import Quiz
 
 User = get_user_model()
 
@@ -67,3 +69,37 @@ class CreateQuizViewTest(APITestCase):
         response = self.client.post(self.url, self.valid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Video is longer than 15 minutes", str(response.data))
+
+
+class MyQuizzesViewTest(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        Quiz.objects.create(owner=self.user, title='Quiz 1', description='First quiz')
+        Quiz.objects.create(owner=self.user, title='Quiz 2', description='Second quiz')
+        
+        # URL for the quizzes view
+        self.url = reverse('quizzes-view')
+    
+    def test_authenticated_user_can_retrieve_their_quizzes(self):
+        # Log in the user
+        self.client.force_authenticate(user=self.user)
+        
+        # Make a GET request to retrieve quizzes
+        response = self.client.get(self.url)
+        
+        # Check that the response is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Check that the returned data contains exactly 2 quizzes
+        self.assertEqual(len(response.data), 2)
+        
+        # Optional: check that the quizzes belong to the correct user
+        for quiz in response.data:
+            self.assertIn('title', quiz)
+    
+    def test_unauthenticated_user_cannot_access_quizzes(self):
+        # Make a GET request without authentication
+        response = self.client.get(self.url)
+        
+        # Check that the response is 401 Unauthorized
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
