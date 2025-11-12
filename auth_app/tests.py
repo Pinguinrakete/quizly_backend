@@ -72,3 +72,78 @@ class RegisterViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
         self.assertIn('Invalid credentials.', response.data['email'][0])
+
+
+class CookieTokenObtainPairViewTests(APITestCase):
+    def setUp(self):
+        # Create a test user
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="strongpassword123"
+        )
+        self.url = reverse('login')
+
+    def test_login_success_sets_cookies(self):
+        """
+        Test: Successful login returns 200 and sets JWT cookies.
+        """
+        data = {
+            "username": "testuser",
+            "password": "strongpassword123"
+        }
+
+        response = self.client.post(self.url, data, format='json')
+
+        # --- Check status ---
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # --- Check JSON content ---
+        self.assertIn("detail", response.data)
+        self.assertIn("user", response.data)
+        self.assertEqual(response.data["user"]["username"], "testuser")
+
+        # --- Check cookies ---
+        cookies = response.cookies
+        self.assertIn('access_token', cookies)
+        self.assertIn('refresh_token', cookies)
+
+        access_cookie = cookies['access_token']
+        refresh_cookie = cookies['refresh_token']
+
+        # Check HTTP-only and Secure flags
+        self.assertTrue(access_cookie['httponly'])
+        self.assertTrue(refresh_cookie['httponly'])
+        self.assertTrue(access_cookie['secure'])
+        self.assertTrue(refresh_cookie['secure'])
+
+    def test_login_failure_invalid_credentials(self):
+        """
+        Test: Invalid password returns 401 Unauthorized.
+        """
+        data = {
+            "username": "testuser",
+            "password": "wrongpassword"
+        }
+
+        response = self.client.post(self.url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertNotIn('access_token', response.cookies)
+        self.assertNotIn('refresh_token', response.cookies)
+
+    def test_login_failure_missing_fields(self):
+        """
+        Test: Missing fields return 401 and field-specific error messages.
+        """
+        data = {"username": "testuser"}  # missing password
+
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Check that a field-specific error exists
+        self.assertIn('password', response.data)
+        self.assertEqual(
+            response.data['password'][0],
+            'This field is required.'
+        )
