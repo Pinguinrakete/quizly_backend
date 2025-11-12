@@ -21,12 +21,13 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • Python 3.11.9
     • Django 5.2.7
     • Django REST Framework 3.16.1
+    • JWT-Authentifizierung  |    Sicherer Login mit JSON Web Tokens
     • SQLite3                |    Database
     • yt-dlp                 |    Download the audio from the video.
     • Whisper                |    Transcribe the audio into text.
     • AI gemini-2.5-flash    |    Generate questions and answers from the text.
 # ![Installation Icon](assets/icons/installation.png) Installation
-# Windows 10/11
+## Windows 10/11
 ### 1. Python 3.11.9
 Check if your Python version is 3.11.9, opening PowerShell or CMD and typing:
 ``` bash 
@@ -43,6 +44,27 @@ Installed from https://www.python.org/downloads/<br><br>
 Check all installed Python Versions
 ``` bash 
  py -0
+ ``` 
+## LINUX
+Check if your Python version is 3.11.9, opening bash and typing:
+``` bash 
+ python3 --version
+ ``` 
+Open bash:
+``` bash 
+sudo apt update
+sudo apt install software-properties-common -y
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+```
+ Check all installed Python Versions
+``` bash 
+ls /usr/bin/python* 
+ ``` 
+## MAC OS
+Check if your Python version is 3.11.9, opening bash and typing:
+``` bash 
+ python3 --version
  ``` 
  ### 2. FFMPEG - Video encoder
 Check if FFMPEG is installed by opening PowerShell or CMD and typing:
