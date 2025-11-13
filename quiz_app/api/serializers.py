@@ -200,7 +200,7 @@ class MyQuizzesSerializer(serializers.ModelSerializer):
     Fields:
         - id, title, description, created_at, updated_at, video_url, questions
     """
-    questions = QuestionForQuizzesSerializer(many=True) 
+    questions = QuestionForQuizzesSerializer(many=True, read_only=True) 
 
     class Meta:
         model = Quiz
@@ -213,9 +213,11 @@ class QuizSinglePatchSerializer(serializers.ModelSerializer):
     Serializer for partially updating a `Quiz`.
 
     Allows updating the `title` field only.
+    Allows updating the `description` field only.
 
     Fields:
         - title
+        - description
     """
     class Meta:
         model = Quiz

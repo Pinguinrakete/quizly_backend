@@ -1,16 +1,15 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from unittest.mock import patch, MagicMock
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from quiz_app.models import Quiz
+from quiz_app.models import Quiz, QuizQuestions
 
 User = get_user_model()
 
 class CreateQuizViewTest(APITestCase):
     def setUp(self):
-        # Create and authenticate test user
         self.user = User.objects.create_user(username="testuser", password="password123")
         self.client.force_authenticate(user=self.user)
         self.url = reverse('create-quiz')
@@ -23,18 +22,13 @@ class CreateQuizViewTest(APITestCase):
     def test_create_quiz_success(self, mock_generate_gemini, mock_whisper_model, mock_yt_dlp):
         """Tests successful creation of a quiz (all external services mocked)."""
 
-        # Mock YouTube download
         mock_yt_dlp.return_value.__enter__.return_value.extract_info.return_value = {'duration': 60}
 
-        # Mock Whisper transcription
         mock_model_instance = MagicMock()
         mock_model_instance.transcribe.return_value = {"text": "This is a test transcript."}
         mock_whisper_model.return_value = mock_model_instance
-
-        # Mock Gemini question generation
         mock_generate_gemini.return_value = None
 
-        # Mock JSON file with simulated content
         with patch("builtins.open", new_callable=MagicMock) as mock_open:
             mock_open.return_value.__enter__.return_value.read.return_value = '''
             {
@@ -51,7 +45,6 @@ class CreateQuizViewTest(APITestCase):
             '''
             response = self.client.post(self.url, self.valid_payload, format='json')
 
-        # Check expected result
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], "Test Quiz")
         self.assertEqual(len(response.data['questions']), 1)
@@ -77,29 +70,110 @@ class MyQuizzesViewTest(APITestCase):
         Quiz.objects.create(owner=self.user, title='Quiz 1', description='First quiz')
         Quiz.objects.create(owner=self.user, title='Quiz 2', description='Second quiz')
         
-        # URL for the quizzes view
         self.url = reverse('quizzes-view')
     
     def test_authenticated_user_can_retrieve_their_quizzes(self):
-        # Log in the user
         self.client.force_authenticate(user=self.user)
         
-        # Make a GET request to retrieve quizzes
         response = self.client.get(self.url)
         
-        # Check that the response is 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
-        # Check that the returned data contains exactly 2 quizzes
+        self.assertEqual(response.status_code, status.HTTP_200_OK)      
         self.assertEqual(len(response.data), 2)
         
-        # Optional: check that the quizzes belong to the correct user
         for quiz in response.data:
             self.assertIn('title', quiz)
     
     def test_unauthenticated_user_cannot_access_quizzes(self):
-        # Make a GET request without authentication
         response = self.client.get(self.url)
         
-        # Check that the response is 401 Unauthorized
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+# class QuizSingleViewTest(APITestCase):
+#     def setUp(self):
+#         # Create test user
+#         self.user = User.objects.create_user(username='testuser', password='testpass')
+#         self.client.force_authenticate(user=self.user)
+
+#         # Create a quiz owned by the user
+#         self.quiz = Quiz.objects.create(
+#             owner=self.user,
+#             title="Test Quiz",
+#             description="Test Description",
+#             video_url="http://example.com/video"
+#         )
+
+#         # Create a question linked to the quiz
+#         self.question = QuizQuestions.objects.create(
+#             quiz=self.quiz,
+#             question_title="Sample Question",
+#             question_options=["A", "B", "C", "D"],
+#             answer="A"
+#         )
+
+#         self.url = reverse('quiz-single-view', kwargs={'pk': self.quiz.id})
+
+#     def test_get_quiz(self):
+#         # Test retrieving a single quiz
+#         response = self.client.get(self.url)
+#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+#         self.assertEqual(response.data['id'], self.quiz.id)
+#         self.assertEqual(response.data['title'], self.quiz.title)
+#         self.assertIn('questions', response.data)
+#         self.assertEqual(len(response.data['questions']), 1)
+
+#     def test_patch_quiz_partial_update(self):
+#         """
+#         Test partially updating a quiz title and ensure other fields stay intact.
+#         """
+#         data = {
+#             "title": "Updated Title"
+#         }
+#         response = self.client.patch(self.url, data, format='json')
+
+#         # Assert status code
+#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+#         # Assert title updated
+#         self.assertEqual(response.data['title'], 'Updated Title')
+
+#         # Assert other fields remain unchanged
+#         self.assertEqual(response.data['description'], 'Test Description')
+
+#         # Assert nested questions exist
+#         self.assertEqual(len(response.data['questions']), 1)
+#         self.assertEqual(response.data['questions'][0]['question_title'], 'Sample Question')
+#         self.assertEqual(response.data['questions'][0]['question_options'], ["A", "B", "C", "D"])
+#         self.assertEqual(response.data['questions'][0]['answer'], "A")
+
+#     def test_patch_quiz_not_found(self):
+#         """
+#         Test patching a non-existent quiz returns 404.
+#         """
+#         url = reverse('quiz-single-view', kwargs={'pk': 999})
+#         response = self.client.patch(url, {"title": "New Title"}, format='json')
+#         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+#         self.assertEqual(response.data['detail'], 'Quiz not found.')
+
+#     def test_patch_quiz_invalid_data(self):
+#         """
+#         Test patching a quiz with invalid data returns 400.
+#         """
+#         data = {
+#             "title": ""  # Empty title should be invalid
+#         }
+#         response = self.client.patch(self.url, data, format='json')
+#         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertIn('title', response.data)
+
+    # def test_delete_quiz(self):
+    #     # Test deleting a quiz
+    #     response = self.client.delete(self.url)
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    #     self.assertFalse(Quiz.objects.filter(id=self.quiz.id).exists())
+
+    # def test_get_nonexistent_quiz(self):
+    #     # Test retrieving a non-existing quiz
+    #     url = reverse('quiz-single-view', kwargs={'pk': 999})
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
