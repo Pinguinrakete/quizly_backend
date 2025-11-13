@@ -1,5 +1,5 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 from rest_framework import status
 from unittest.mock import patch, MagicMock
 from django.contrib.auth import get_user_model
@@ -119,6 +119,32 @@ class QuizSingleViewTest(APITestCase):
         self.assertEqual(response.data['title'], self.quiz.title)
         self.assertIn('questions', response.data)
         self.assertEqual(len(response.data['questions']), 1)
+
+    def test_get_nonexistent_quiz(self):
+        url = reverse('quiz-single-view', kwargs={'pk': 999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_patch_updates_title_and_description_only(self):
+        payload = {"title": "New Title", "description": "New Description", "video_url": "http://hack.com"}
+        response = self.client.patch(self.url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.quiz.refresh_from_db()
+        self.assertEqual(self.quiz.title, "New Title")
+        self.assertEqual(self.quiz.description, "New Description")
+        self.assertEqual(self.quiz.video_url, "http://example.com/video")
+
+    def test_patch_cannot_modify_questions(self):
+        new_question = QuizQuestions.objects.create(
+            question_title="New Q",
+            question_options=["A", "B", "C", "D"],
+            answer="B"
+        )
+        payload = {"questions": [new_question.id]}
+        response = self.client.patch(self.url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.quiz.refresh_from_db()
+        self.assertEqual(self.quiz.questions.count(), 1) 
 
     def test_delete_quiz(self):
         response = self.client.delete(self.url)
