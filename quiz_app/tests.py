@@ -89,3 +89,33 @@ class MyQuizzesViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
+class QuizSingleViewTest(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
+
+        self.quiz = Quiz.objects.create(
+            owner=self.user,
+            title="Test Quiz",
+            description="Test Description",
+            video_url="http://example.com/video"
+        )
+
+        self.question = QuizQuestions.objects.create(
+            question_title="Sample Question",
+            question_options=["A", "B", "C", "D"],
+            answer="A"
+        )
+
+        self.quiz.questions.add(self.question)
+        self.quiz.save()
+
+        self.url = reverse('quiz-single-view', kwargs={'pk': self.quiz.id})
+
+    def test_get_quiz(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.quiz.id)
+        self.assertEqual(response.data['title'], self.quiz.title)
+        self.assertIn('questions', response.data)
+        self.assertEqual(len(response.data['questions']), 1)
