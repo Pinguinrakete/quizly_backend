@@ -1,14 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
-  
+
 
 class QuizQuestions(models.Model):
     """
     Represents a quiz question with multiple choice options and its correct answer.
 
     Attributes:
-        question_title (str): The text of the quiz question 
+        question_title (str): The text of the quiz question
             (e.g., "What is the capital of France?").
         question_options (list of str): A list containing exactly 4 possible answer options.
         answer (str): The correct answer, which must match one of the options in `question_options`.
@@ -20,6 +20,7 @@ class QuizQuestions(models.Model):
         save(*args, **kwargs): Calls `full_clean` before saving to enforce validation.
         __str__(): Returns the `question_title` as the string representation of the object.
     """
+
     question_title = models.CharField(max_length=255)
     question_options = models.JSONField(default=list, blank=True)
     answer = models.CharField(max_length=255)
@@ -29,14 +30,14 @@ class QuizQuestions(models.Model):
     def clean(self):
         if len(self.question_options) != 4:
             raise ValidationError("Each question must have exactly 4 answer options.")
-        
+
     def save(self, *args, **kwargs):
-        self.full_clean()  
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.question_title
-    
+
 
 class Quiz(models.Model):
     """
@@ -54,6 +55,7 @@ class Quiz(models.Model):
     Methods:
         __str__: Returns the string representation of the quiz title.
     """
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quizzes")
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -61,6 +63,6 @@ class Quiz(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     video_url = models.CharField(max_length=255)
     questions = models.ManyToManyField(QuizQuestions, blank=True)
-    
+
     def __str__(self):
         return self.title

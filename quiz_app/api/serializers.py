@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 MAX_VIDEO_DURATION = 15 * 60
 
+
 class YoutubeURLSerializer(serializers.Serializer):
     """
     Serializer for validating and processing YouTube video URLs.
@@ -35,6 +36,7 @@ class YoutubeURLSerializer(serializers.Serializer):
         - serializers.ValidationError: If the URL or JSON data is invalid, or
           if the video is too long or cannot be processed.
     """
+
     url = serializers.CharField(max_length=255)
 
     def validate_url(self, url):
@@ -57,31 +59,28 @@ class YoutubeURLSerializer(serializers.Serializer):
             video_id = video_id_list[0]
 
         ydl_opts = {
-            'quiet': True,
-            'skip_download': True,
-            'no_warnings': True, 
-            }
+            "quiet": True,
+            "skip_download": True,
+            "no_warnings": True,
+        }
 
         video_url = f"https://www.youtube.com/watch?v={video_id}"
-        
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
-            duration = info.get('duration')
+            duration = info.get("duration")
 
             if duration is None:
-                raise serializers.ValidationError("The length of the video could not be read.")
+                raise serializers.ValidationError(
+                    "The length of the video could not be read."
+                )
             if duration > MAX_VIDEO_DURATION:
                 raise serializers.ValidationError("Video is longer than 15 minutes.")
 
         clean_query = urlencode({"v": video_id})
-        clean_url = urlunparse((
-            "https",
-            "www.youtube.com",
-            "/watch",
-            '',
-            clean_query,
-            ''
-        ))
+        clean_url = urlunparse(
+            ("https", "www.youtube.com", "/watch", "", clean_query, "")
+        )
 
         return clean_url
 
@@ -89,7 +88,7 @@ class YoutubeURLSerializer(serializers.Serializer):
         filename = "media/generated_text.txt"
 
         try:
-            with open(filename, 'r', encoding='utf-8') as file:
+            with open(filename, "r", encoding="utf-8") as file:
                 content = json.load(file)
 
             title = content.get("title")
@@ -101,28 +100,29 @@ class YoutubeURLSerializer(serializers.Serializer):
                     "JSON must contain at least 'title' and 'questions'."
                 )
 
-            request = self.context.get('request')
-            owner = request.user if request and request.user.is_authenticated else User.objects.first()
+            request = self.context.get("request")
+            owner = (
+                request.user
+                if request and request.user.is_authenticated
+                else User.objects.first()
+            )
 
-            clean_url = self.validated_data['url']
+            clean_url = self.validated_data["url"]
 
             quiz = Quiz.objects.create(
-                owner=owner,
-                title=title,
-                description=description,
-                video_url=clean_url
+                owner=owner, title=title, description=description, video_url=clean_url
             )
 
             for q in questions_data:
                 question = QuizQuestions.objects.create(
                     question_title=q.get("question_title"),
                     question_options=q.get("question_options", []),
-                    answer=q.get("answer")
+                    answer=q.get("answer"),
                 )
                 quiz.questions.add(question)
 
             quiz.save()
-            return quiz  
+            return quiz
 
         except json.JSONDecodeError:
             raise serializers.ValidationError("File does not contain valid JSON.")
@@ -135,22 +135,41 @@ class QuestionSerializer(serializers.ModelSerializer):
     Serializer for `QuizQuestions`.
 
     Ensures each question has exactly 4 answer options.
-    
+
     Fields:
         - id, question_title, question_options, answer, created_at, updated_at
     """
-    question_options = serializers.ListField(child=serializers.CharField(max_length=255), required=False, default=list)
+
+    question_options = serializers.ListField(
+        child=serializers.CharField(max_length=255), required=False, default=list
+    )
 
     class Meta:
         model = QuizQuestions
-        fields = ['id', 'question_title','question_options', 'answer', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'question_title','question_options', 'answer', 'created_at', 'updated_at']
+        fields = [
+            "id",
+            "question_title",
+            "question_options",
+            "answer",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "question_title",
+            "question_options",
+            "answer",
+            "created_at",
+            "updated_at",
+        ]
 
     def validate_question_options(self, value):
         if len(value) != 4:
-            raise serializers.ValidationError("Each question must have exactly 4 answer options.")
+            raise serializers.ValidationError(
+                "Each question must have exactly 4 answer options."
+            )
         return value
-    
+
 
 class CreateQuizSerializer(serializers.ModelSerializer):
     """
@@ -161,12 +180,29 @@ class CreateQuizSerializer(serializers.ModelSerializer):
     Fields:
         - id, title, description, created_at, updated_at, video_url, questions
     """
-    questions = QuestionSerializer(many=True) 
+
+    questions = QuestionSerializer(many=True)
 
     class Meta:
         model = Quiz
-        fields = ['id', 'title','description', 'created_at', 'updated_at', 'video_url', 'questions']
-        read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+        fields = [
+            "id",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "video_url",
+            "questions",
+        ]
+        read_only_fields = [
+            "id",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "video_url",
+            "questions",
+        ]
 
 
 class QuestionForQuizzesSerializer(serializers.ModelSerializer):
@@ -178,18 +214,23 @@ class QuestionForQuizzesSerializer(serializers.ModelSerializer):
     Fields:
         - id, question_title, question_options, answer
     """
-    question_options = serializers.ListField(child=serializers.CharField(max_length=255), required=False, default=list)
+
+    question_options = serializers.ListField(
+        child=serializers.CharField(max_length=255), required=False, default=list
+    )
 
     class Meta:
         model = QuizQuestions
-        fields = ['id', 'question_title','question_options', 'answer']
-        read_only_fields = ['id', 'question_title','question_options', 'answer']
+        fields = ["id", "question_title", "question_options", "answer"]
+        read_only_fields = ["id", "question_title", "question_options", "answer"]
 
     def validate_question_options(self, value):
         if len(value) != 4:
-            raise serializers.ValidationError("Each question must have exactly 4 answer options.")
+            raise serializers.ValidationError(
+                "Each question must have exactly 4 answer options."
+            )
         return value
-    
+
 
 class MyQuizzesSerializer(serializers.ModelSerializer):
     """
@@ -200,12 +241,29 @@ class MyQuizzesSerializer(serializers.ModelSerializer):
     Fields:
         - id, title, description, created_at, updated_at, video_url, questions
     """
-    questions = QuestionForQuizzesSerializer(many=True, read_only=True) 
+
+    questions = QuestionForQuizzesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Quiz
-        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
-        read_only_fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+        fields = [
+            "id",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "video_url",
+            "questions",
+        ]
+        read_only_fields = [
+            "id",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "video_url",
+            "questions",
+        ]
 
 
 class QuizSinglePatchSerializer(serializers.ModelSerializer):
@@ -219,7 +277,15 @@ class QuizSinglePatchSerializer(serializers.ModelSerializer):
         - title
         - description
     """
+
     class Meta:
         model = Quiz
-        fields = ['title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
-        read_only_fields = ['id', 'created_at', 'updated_at', 'video_url', 'questions']
+        fields = [
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "video_url",
+            "questions",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "video_url", "questions"]

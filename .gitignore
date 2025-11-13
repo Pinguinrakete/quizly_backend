@@ -21,3 +21,6 @@ env/
 
 # Media files
 media/
+
+#coverage
+.coverage
