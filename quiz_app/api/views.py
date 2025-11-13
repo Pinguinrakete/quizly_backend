@@ -121,13 +121,9 @@ class QuizSingleView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get(self, request, pk):
-        try:
-            quiz = get_object_or_404(Quiz, id=pk)
-            serializer = MyQuizzesSerializer(quiz, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
-    
-        except Exception as e:
-            return Response({'error': f'Unexpected error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        quiz = get_object_or_404(Quiz, id=pk)
+        serializer = MyQuizzesSerializer(quiz, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def patch(self, request, pk):
@@ -149,6 +145,5 @@ class QuizSingleView(APIView):
         try:
             quiz.delete()
         except DatabaseError as e:
-            return Response({'error': f'Unexpected error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response({'error': f'An unexpected error occurred.: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(status=status.HTTP_204_NO_CONTENT)
