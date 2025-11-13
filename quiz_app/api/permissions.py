@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class IsOwner(permissions.BasePermission):

@@ -1,7 +1,9 @@
-import os, yt_dlp, whisper
-from google import genai
-from dotenv import load_dotenv
+import os
 
+import whisper
+import yt_dlp
+from dotenv import load_dotenv
+from google import genai
 
 load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
@@ -69,7 +71,7 @@ class AudioQuestionGenerator:
         if os.path.exists(audio_file):
             os.remove(audio_file)
 
-        self.transcript_text = f"transcribed_text"
+        self.transcript_text = "transcribed_text"
         text_file_path = f"media/{self.transcribed_text}.txt"
         with open(text_file_path, "w", encoding="utf-8") as f:
             f.write(result["text"])
@@ -111,7 +113,7 @@ class AudioQuestionGenerator:
             contents=prompt,
         )
 
-        self.generated_text = f"generated_text"
+        self.generated_text = "generated_text"
         filename = f"media/{self.generated_text}.txt"
         self.write_file(filename, response.text)
 

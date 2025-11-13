@@ -1,8 +1,11 @@
-from rest_framework import serializers
-from quiz_app.models import Quiz, QuizQuestions
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
-import yt_dlp, json
+import json
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+
+import yt_dlp
 from django.contrib.auth.models import User
+from rest_framework import serializers
+
+from quiz_app.models import Quiz, QuizQuestions
 
 MAX_VIDEO_DURATION = 15 * 60
 

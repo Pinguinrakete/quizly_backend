@@ -1,20 +1,21 @@
-from .permissions import IsOwner
-from .serializers import (
-    YoutubeURLSerializer,
-    CreateQuizSerializer,
-    MyQuizzesSerializer,
-    QuizSinglePatchSerializer,
-)
-from .utils import AudioQuestionGenerator
+import os  # If this is removed, the tests will fail!
+
+import whisper
+import yt_dlp
 from django.db import DatabaseError
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from quiz_app.models import Quiz
-import os, yt_dlp, whisper
+
+from .permissions import IsOwner
+from .serializers import (CreateQuizSerializer, MyQuizzesSerializer,
+                          QuizSinglePatchSerializer, YoutubeURLSerializer)
+from .utils import AudioQuestionGenerator
 
 
 class CreateQuizView(APIView):

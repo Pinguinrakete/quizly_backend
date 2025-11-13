@@ -1,9 +1,11 @@
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from quiz_app.models import Quiz, QuizQuestions
 
 User = get_user_model()

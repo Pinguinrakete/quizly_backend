@@ -1,10 +1,7 @@
 from django.urls import path
-from .views import (
-    RegisterView,
-    CookieTokenObtainPairView,
-    LogoutView,
-    CookieTokenRefreshView,
-)
+
+from .views import (CookieTokenObtainPairView, CookieTokenRefreshView,
+                    LogoutView, RegisterView)
 
 """
     URL routes for authentication-related API endpoints.
