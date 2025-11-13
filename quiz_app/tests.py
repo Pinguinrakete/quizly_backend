@@ -119,3 +119,13 @@ class QuizSingleViewTest(APITestCase):
         self.assertEqual(response.data['title'], self.quiz.title)
         self.assertIn('questions', response.data)
         self.assertEqual(len(response.data['questions']), 1)
+
+    def test_delete_quiz(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Quiz.objects.filter(id=self.quiz.id).exists())
+
+    def test_get_nonexistent_quiz(self):
+        url = reverse('quiz-single-view', kwargs={'pk': 999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
