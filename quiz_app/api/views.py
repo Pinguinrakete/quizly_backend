@@ -93,7 +93,8 @@ class CreateQuizView(APIView):
             try:
                 quiz = serializer.create()
                 return Response(
-                    CreateQuizSerializer(quiz).data, status=status.HTTP_201_CREATED
+                    CreateQuizSerializer(
+                        quiz).data, status=status.HTTP_201_CREATED
                 )
             finally:
                 generate.delete_generated_text()

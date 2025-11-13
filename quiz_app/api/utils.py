@@ -105,7 +105,7 @@ class AudioQuestionGenerator:
             }}
 
             transcript:
-            {transcript[:10000]} 
+            {transcript[:10000]}
             """
 
         response = CLIENT.models.generate_content(
@@ -128,7 +128,7 @@ class AudioQuestionGenerator:
 
     def remove_markdown(self, content):
         if content.startswith("```json"):
-            content = content[len("```json ") :]
+            content = content[len("```json "):]
 
         if content.endswith("```"):
             content = content[:-3]

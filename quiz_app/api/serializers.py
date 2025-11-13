@@ -14,25 +14,27 @@ class YoutubeURLSerializer(serializers.Serializer):
     """
     Serializer for validating and processing YouTube video URLs.
 
-    This serializer ensures that the provided URL belongs to a valid YouTube domain,
-    extracts the video ID, checks the video's duration using `yt_dlp`,
-    and ensures it does not exceed the maximum allowed length.
+    This serializer ensures that the provided URL belongs to a valid
+    YouTube domain, extracts the video ID, checks the video's duration
+    using `yt_dlp`, and ensures it does not exceed the maximum allowed length.
 
-    Upon successful validation, the `create()` method reads a generated JSON file
-    containing quiz data (title, description, and questions), and creates a
-    corresponding `Quiz` instance with related `QuizQuestions`.
+    Upon successful validation, the `create()` method reads a generated JSON
+    file containing quiz data (title, description, and questions), and
+    creates a corresponding `Quiz` instance with related `QuizQuestions`.
 
     Fields:
         - url (str): The YouTube video URL to validate.
 
     Validation:
         - URL must not be empty.
-        - Must belong to a recognized YouTube domain (e.g. youtube.com, youtu.be).
+        - Must belong to a recognized YouTube domain
+          (e.g. youtube.com, youtu.be).
         - Must contain a valid video ID.
         - Video duration must be readable and not exceed 15 minutes.
 
     Methods:
-        - validate_url(url): Validates and normalizes the provided YouTube URL.
+        - validate_url(url): Validates and normalizes
+          the provided YouTube URL.
         - create(): Reads quiz data from JSON and creates a `Quiz` with questions.
 
     Raises:
@@ -48,7 +50,8 @@ class YoutubeURLSerializer(serializers.Serializer):
 
         parsed_url = urlparse(url)
 
-        valid_domains = ["www.youtube.com", "youtube.com", "m.youtube.com", "youtu.be"]
+        valid_domains = ["www.youtube.com",
+                         "youtube.com", "m.youtube.com", "youtu.be"]
         if parsed_url.netloc not in valid_domains:
             raise serializers.ValidationError("Invalid YouTube URL domain.")
 
@@ -78,7 +81,8 @@ class YoutubeURLSerializer(serializers.Serializer):
                     "The length of the video could not be read."
                 )
             if duration > MAX_VIDEO_DURATION:
-                raise serializers.ValidationError("Video is longer than 15 minutes.")
+                raise serializers.ValidationError(
+                    "Video is longer than 15 minutes.")
 
         clean_query = urlencode({"v": video_id})
         clean_url = urlunparse(
@@ -113,7 +117,10 @@ class YoutubeURLSerializer(serializers.Serializer):
             clean_url = self.validated_data["url"]
 
             quiz = Quiz.objects.create(
-                owner=owner, title=title, description=description, video_url=clean_url
+                owner=owner,
+                title=title,
+                description=description,
+                video_url=clean_url
             )
 
             for q in questions_data:
@@ -128,7 +135,8 @@ class YoutubeURLSerializer(serializers.Serializer):
             return quiz
 
         except json.JSONDecodeError:
-            raise serializers.ValidationError("File does not contain valid JSON.")
+            raise serializers.ValidationError(
+                "File does not contain valid JSON.")
         except Exception as e:
             raise serializers.ValidationError(str(e))
 
@@ -140,7 +148,8 @@ class QuestionSerializer(serializers.ModelSerializer):
     Ensures each question has exactly 4 answer options.
 
     Fields:
-        - id, question_title, question_options, answer, created_at, updated_at
+        - id, question_title, question_options,
+          answer, created_at, updated_at
     """
 
     question_options = serializers.ListField(
@@ -225,7 +234,8 @@ class QuestionForQuizzesSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuizQuestions
         fields = ["id", "question_title", "question_options", "answer"]
-        read_only_fields = ["id", "question_title", "question_options", "answer"]
+        read_only_fields = ["id", "question_title",
+                            "question_options", "answer"]
 
     def validate_question_options(self, value):
         if len(value) != 4:
@@ -291,4 +301,5 @@ class QuizSinglePatchSerializer(serializers.ModelSerializer):
             "video_url",
             "questions",
         ]
-        read_only_fields = ["id", "created_at", "updated_at", "video_url", "questions"]
+        read_only_fields = ["id", "created_at",
+                            "updated_at", "video_url", "questions"]

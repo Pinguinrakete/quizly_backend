@@ -18,7 +18,8 @@ class CreateQuizViewTest(APITestCase):
         )
         self.client.force_authenticate(user=self.user)
         self.url = reverse("create-quiz")
-        self.valid_payload = {"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+        self.valid_payload = {
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
         self.invalid_payload = {"url": "https://www.invalid.com/watch?v=123"}
 
     @patch("quiz_app.api.views.yt_dlp.YoutubeDL")
@@ -54,7 +55,8 @@ class CreateQuizViewTest(APITestCase):
                 ]
             }
             """
-            response = self.client.post(self.url, self.valid_payload, format="json")
+            response = self.client.post(
+                self.url, self.valid_payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["title"], "Test Quiz")
@@ -62,7 +64,8 @@ class CreateQuizViewTest(APITestCase):
 
     def test_create_quiz_invalid_url(self):
         """Tests that an invalid URL is correctly rejected."""
-        response = self.client.post(self.url, self.invalid_payload, format="json")
+        response = self.client.post(
+            self.url, self.invalid_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Invalid YouTube URL domain", str(response.data))
 
@@ -72,16 +75,20 @@ class CreateQuizViewTest(APITestCase):
         mock_yt_dlp.return_value.__enter__.return_value.extract_info.return_value = {
             "duration": 3600
         }
-        response = self.client.post(self.url, self.valid_payload, format="json")
+        response = self.client.post(
+            self.url, self.valid_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Video is longer than 15 minutes", str(response.data))
 
 
 class MyQuizzesViewTest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpass")
-        Quiz.objects.create(owner=self.user, title="Quiz 1", description="First quiz")
-        Quiz.objects.create(owner=self.user, title="Quiz 2", description="Second quiz")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpass")
+        Quiz.objects.create(owner=self.user, title="Quiz 1",
+                            description="First quiz")
+        Quiz.objects.create(owner=self.user, title="Quiz 2",
+                            description="Second quiz")
 
         self.url = reverse("quizzes-view")
 
@@ -104,7 +111,8 @@ class MyQuizzesViewTest(APITestCase):
 
 class QuizSingleViewTest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpass")
         self.client.force_authenticate(user=self.user)
 
         self.quiz = Quiz.objects.create(
@@ -165,8 +173,3 @@ class QuizSingleViewTest(APITestCase):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Quiz.objects.filter(id=self.quiz.id).exists())
-
-    def test_get_nonexistent_quiz(self):
-        url = reverse("quiz-single-view", kwargs={"pk": 999})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

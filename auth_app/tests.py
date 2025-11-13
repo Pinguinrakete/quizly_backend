@@ -26,18 +26,21 @@ class RegisterViewTests(APITestCase):
         )
 
     def test_register_valid_user_creates_account(self):
-        response = self.client.post(self.url, self.valid_payload, format="json")
+        response = self.client.post(
+            self.url, self.valid_payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["detail"], "User created successfully!")
         self.assertTrue(User.objects.filter(username="new_user").exists())
 
     def test_register_with_mismatched_passwords_returns_error(self):
-        response = self.client.post(self.url, self.mismatch_payload, format="json")
+        response = self.client.post(
+            self.url, self.mismatch_payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("confirmed_password", response.data)
-        self.assertIn("Passwords do not match", response.data["confirmed_password"][0])
+        self.assertIn("Passwords do not match",
+                      response.data["confirmed_password"][0])
 
     def test_register_with_existing_username_returns_error(self):
         payload = {
@@ -117,7 +120,8 @@ class CookieTokenObtainPairViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         self.assertIn("password", response.data)
-        self.assertEqual(response.data["password"][0], "This field is required.")
+        self.assertEqual(response.data["password"]
+                         [0], "This field is required.")
 
 
 class CookieTokenRefreshViewTest(APITestCase):
@@ -189,13 +193,16 @@ class LogoutViewTest(APITestCase):
         blacklisted = BlacklistedToken.objects.filter(
             token__token=refresh_token
         ).exists()
-        self.assertTrue(blacklisted, "Refresh token was not blacklisted after logout.")
+        self.assertTrue(
+            blacklisted, "Refresh token was not blacklisted after logout.")
 
         self.client.cookies["refresh_token"] = refresh_token
         refresh_url = reverse("token_refresh")
         refresh_response = self.client.post(refresh_url)
-        self.assertEqual(refresh_response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(refresh_response.data["detail"], "Refresh token invalid!")
+        self.assertEqual(refresh_response.status_code,
+                         status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(
+            refresh_response.data["detail"], "Refresh token invalid!")
 
     def test_logout_with_valid_refresh_token(self):
         """
