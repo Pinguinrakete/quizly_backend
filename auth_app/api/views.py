@@ -28,7 +28,8 @@ class RegisterView(APIView):
             serializer.save()
 
             return Response(
-                {"detail": "User created successfully!"}, status=status.HTTP_201_CREATED
+                {"detail": "User created successfully!"},
+                status=status.HTTP_201_CREATED
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -152,7 +153,10 @@ class LogoutView(APIView):
 
         response = Response(
             {
-                "detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."
+                "detail": (
+                    "Log-Out successfully! All Tokens will be deleted. "
+                    "Refresh token is now invalid."
+                )
             },
             status=status.HTTP_200_OK,
         )

@@ -1,0 +1,8 @@
+[flake8]
+exclude =
+    migrations,
+    env,
+    venv,
+    .venv,
+    **/sympy/**,
+max-line-length = 79

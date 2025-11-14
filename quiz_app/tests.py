@@ -19,18 +19,25 @@ class CreateQuizViewTest(APITestCase):
             "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
         self.invalid_payload = {"url": "https://www.invalid.com/watch?v=123"}
 
-    @patch("quiz_app.api.views.yt_dlp.YoutubeDL")
-    @patch("quiz_app.api.views.whisper.load_model")
-    @patch("quiz_app.api.views.AudioQuestionGenerator.generate_questions_gemini")
+    @patch(
+        "quiz_app.api.views.yt_dlp.YoutubeDL"
+        )
+    @patch(
+        "quiz_app.api.views.whisper.load_model"
+        )
+    @patch(
+        "quiz_app.api.views.AudioQuestionGenerator.generate_questions_gemini"
+        )
     def test_create_quiz_success(
         self, mock_generate_gemini, mock_whisper_model, mock_yt_dlp
     ):
-        """Tests successful creation of a quiz (all external services mocked)."""
+        """Tests successful creation of a quiz
+        (all external services mocked)."""
 
-        mock_yt_dlp.return_value.__enter__.return_value.extract_info.return_value = {
-            "duration": 60
-        }
-
+        extract_info_mock = (
+            mock_yt_dlp.return_value.__enter__.return_value.extract_info
+        )
+        extract_info_mock.return_value = {"duration": 60}
         mock_model_instance = MagicMock()
         mock_model_instance.transcribe.return_value = {
             "text": "This is a test transcript."
@@ -39,7 +46,8 @@ class CreateQuizViewTest(APITestCase):
         mock_generate_gemini.return_value = None
 
         with patch("builtins.open", new_callable=MagicMock) as mock_open:
-            mock_open.return_value.__enter__.return_value.read.return_value = """
+            mock_read = mock_open.return_value.__enter__.return_value.read
+            mock_read.return_value = """\
             {
                 "title": "Test Quiz",
                 "description": "Short description.",
@@ -52,6 +60,7 @@ class CreateQuizViewTest(APITestCase):
                 ]
             }
             """
+
             response = self.client.post(
                 self.url, self.valid_payload, format="json")
 
@@ -69,9 +78,11 @@ class CreateQuizViewTest(APITestCase):
     @patch("quiz_app.api.views.yt_dlp.YoutubeDL")
     def test_video_too_long(self, mock_yt_dlp):
         """Tests rejection of a video longer than 15 minutes."""
-        mock_yt_dlp.return_value.__enter__.return_value.extract_info.return_value = {
-            "duration": 3600
-        }
+        mock_extract_info = (
+            mock_yt_dlp.return_value.__enter__.return_value.extract_info
+        )
+        mock_extract_info.return_value = {"duration": 3600}
+
         response = self.client.post(
             self.url, self.valid_payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

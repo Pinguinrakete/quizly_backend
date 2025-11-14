@@ -1,4 +1,6 @@
-import os, whisper, yt_dlp  # If this is removed, the tests will fail!
+import os  # If this is removed, the tests will fail!
+import whisper  # If this is removed, the tests will fail!
+import yt_dlp  # If this is removed, the tests will fail!
 from django.db import DatabaseError
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -67,7 +69,12 @@ class CreateQuizView(APIView):
                 generate.generate_questions_gemini()
             except Exception as e:
                 return Response(
-                    {"detail": f"Generating questions with Gemini failed: {str(e)}"},
+                    {
+                        "detail": (
+                            "Generating questions with Gemini failed: "
+                            f"{str(e)}"
+                        )
+                    },
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 

@@ -58,7 +58,8 @@ class RegisterViewTests(APITestCase):
                          )
         self.assertIn("username", response.data)
         self.assertIn(
-            "A user with that username already exists.", response.data["username"][0]
+            "A user with that username already exists.",
+            response.data["username"][0]
         )
 
     def test_register_with_existing_email_returns_error(self):
@@ -80,7 +81,9 @@ class RegisterViewTests(APITestCase):
 class CookieTokenObtainPairViewTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username="testuser", email="test@example.com", password="strongpassword123"
+            username="testuser",
+            email="test@example.com",
+            password="strongpassword123"
         )
         self.url = reverse("login")
 
@@ -179,7 +182,8 @@ class LogoutViewTest(APITestCase):
 
     def test_logout_blacklists_refresh_token(self):
         """
-        Test: After logout, the refresh token is blacklisted and cannot be used again.
+        Test: After logout, the refresh token is
+              blacklisted and cannot be used again.
         """
         refresh = RefreshToken.for_user(self.user)
         access_token = str(refresh.access_token)
@@ -190,10 +194,16 @@ class LogoutViewTest(APITestCase):
 
         response = self.client.post(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+            )
         self.assertEqual(
             response.data["detail"],
-            "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid.",
+            (
+                "Log-Out successfully! All Tokens will be deleted. "
+                "Refresh token is now invalid."
+            ),
         )
 
         blacklisted = BlacklistedToken.objects.filter(
@@ -205,28 +215,36 @@ class LogoutViewTest(APITestCase):
         self.client.cookies["refresh_token"] = refresh_token
         refresh_url = reverse("token_refresh")
         refresh_response = self.client.post(refresh_url)
-        self.assertEqual(refresh_response.status_code,
-                         status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(
+            refresh_response.status_code,
+            status.HTTP_401_UNAUTHORIZED
+            )
         self.assertEqual(
             refresh_response.data["detail"], "Refresh token invalid!")
 
     def test_logout_with_valid_refresh_token(self):
         """
-        Test: Logging out with a valid refresh token deletes cookies and returns 200.
+        Test: Logging out with a valid refresh token deletes
+              cookies and returns 200.
         """
         refresh = RefreshToken.for_user(self.user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
 
         self.client.cookies["refresh_token"] = refresh_token
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {access_token}"
+            )
 
         response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["detail"],
-            "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid.",
+            (
+                "Log-Out successfully! All Tokens will be deleted. "
+                "Refresh token is now invalid."
+            ),
         )
 
         self.assertIn("refresh_token", response.cookies)
@@ -236,23 +254,23 @@ class LogoutViewTest(APITestCase):
 
     def test_logout_without_refresh_token(self):
         """
-        Test: Logging out without a refresh token still returns 200 and clears cookies.
+        Test: Logging out without a refresh token
+              still returns 200 and clears cookies.
         """
         refresh = RefreshToken.for_user(self.user)
         access_token = str(refresh.access_token)
-
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
-
         response = self.client.post(self.url)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["detail"],
-            "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid.",
+            (
+                "Log-Out successfully! All Tokens will be deleted. "
+                "Refresh token is now invalid."
+            ),
         )
 
         self.assertIn("refresh_token", response.cookies)
         self.assertEqual(response.cookies["refresh_token"].value, "")
         self.assertIn("access_token", response.cookies)
         self.assertEqual(response.cookies["access_token"].value, "")
-        
