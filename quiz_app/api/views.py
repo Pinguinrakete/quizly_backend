@@ -1,7 +1,4 @@
-import os  # If this is removed, the tests will fail!
-
-import whisper
-import yt_dlp
+import os, whisper, yt_dlp  # If this is removed, the tests will fail!
 from django.db import DatabaseError
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -112,7 +109,8 @@ class MyQuizzesView(generics.ListAPIView):
 
     Returns:
         - 200 OK: Successfully retrieved the user's quizzes.
-        - 500 Internal Server Error: If an unexpected error occurs while fetching data.
+        - 500 Internal Server Error: If an unexpected error
+          occurs while fetching data.
 
     Requires JWT authentication and ownership permissions.
     """
@@ -130,7 +128,8 @@ class MyQuizzesView(generics.ListAPIView):
 
         except Exception as e:
             return Response(
-                {"detail": {str(e)}}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"detail": {str(e)}},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 

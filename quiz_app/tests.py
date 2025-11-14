@@ -1,14 +1,11 @@
 from unittest.mock import MagicMock, patch
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from quiz_app.models import Quiz, QuizQuestions
-
-User = get_user_model()
 
 
 class CreateQuizViewTest(APITestCase):
@@ -161,7 +158,9 @@ class QuizSingleViewTest(APITestCase):
 
     def test_patch_cannot_modify_questions(self):
         new_question = QuizQuestions.objects.create(
-            question_title="New Q", question_options=["A", "B", "C", "D"], answer="B"
+            question_title="New Q",
+            question_options=["A", "B", "C", "D"],
+            answer="B"
         )
         payload = {"questions": [new_question.id]}
         response = self.client.patch(self.url, payload, format="json")

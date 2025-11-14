@@ -65,7 +65,10 @@ class Quiz(models.Model):
         __str__: Returns the string representation of the quiz title.
     """
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quizzes")
+    owner = models.ForeignKey(User,
+                              on_delete=models.CASCADE,
+                              related_name="quizzes"
+                              )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

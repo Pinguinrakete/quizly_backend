@@ -11,7 +11,13 @@ from .views import CreateQuizView, MyQuizzesView, QuizSingleView
     - Retrieving, updating, or deleting a single quiz by its ID
 """
 urlpatterns = [
-    path("createQuiz/", CreateQuizView.as_view(), name="create-quiz"),
-    path("quizzes/", MyQuizzesView.as_view(), name="quizzes-view"),
-    path("quizzes/<int:pk>/", QuizSingleView.as_view(), name="quiz-single-view"),
+    path("createQuiz/",
+         CreateQuizView.as_view(),
+         name="create-quiz"),
+    path("quizzes/",
+         MyQuizzesView.as_view(),
+         name="quizzes-view"),
+    path("quizzes/<int:pk>/",
+         QuizSingleView.as_view(),
+         name="quiz-single-view"),
 ]

@@ -69,11 +69,15 @@ class CookieTokenObtainPairSerializer(TokenObtainPairSerializer):
         password = attrs.get("password")
 
         if not username or not password:
-            raise serializers.ValidationError("Both fields must be filled out.")
+            raise serializers.ValidationError(
+                "Both fields must be filled out."
+                )
 
         user = authenticate(username=username, password=password)
         if user is None:
-            raise serializers.ValidationError(("Invalid username or password."))
+            raise serializers.ValidationError(
+                "Invalid username or password."
+                )
 
         attrs["user"] = user
 

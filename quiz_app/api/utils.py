@@ -13,7 +13,8 @@ CLIENT = genai.Client(api_key=API_KEY)
 
 class AudioQuestionGenerator:
     """
-    Utility class to generate quiz questions from a YouTube audio track.
+    Utility class to generate quiz questions
+    from a YouTube audio track.
 
     Workflow:
         1. Download audio from a YouTube URL and convert to WAV.
@@ -30,7 +31,8 @@ class AudioQuestionGenerator:
     Methods:
         - download_audio(url): Downloads and converts YouTube audio to WAV.
         - transcribe_whisper(): Transcribes audio into text using Whisper.
-        - generate_questions_gemini(): Generates a quiz JSON from the transcript.
+        - generate_questions_gemini(): Generates a quiz JSON
+                                       from the transcript.
         - edge_cleaner_text(): Cleans formatting of generated quiz text.
         - remove_markdown(content): Removes markdown wrappers from text.
         - read_file(filename): Reads text content from a file.
@@ -88,7 +90,8 @@ class AudioQuestionGenerator:
             - Each question must have exactly 4 distinct answer options.
             - Each question must have exactly one correct answer.
             - Include the correct answer in the 'question_options'.
-            - Do not include explanations, comments, or any text outside the JSON.
+            - Do not include explanations, comments,
+              or any text outside the JSON.
             - Answer in English only.
             - Return the output strictly in the following JSON format:
 

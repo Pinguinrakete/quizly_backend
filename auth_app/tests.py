@@ -22,7 +22,9 @@ class RegisterViewTests(APITestCase):
             "email": "mismatch@example.com",
         }
         self.existing_user = User.objects.create_user(
-            username="existing", email="existing@example.com", password="password123"
+            username="existing",
+            email="existing@example.com",
+            password="password123"
         )
 
     def test_register_valid_user_creates_account(self):
@@ -51,7 +53,9 @@ class RegisterViewTests(APITestCase):
         }
         response = self.client.post(self.url, payload, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code,
+                         status.HTTP_400_BAD_REQUEST
+                         )
         self.assertIn("username", response.data)
         self.assertIn(
             "A user with that username already exists.", response.data["username"][0]
@@ -66,7 +70,9 @@ class RegisterViewTests(APITestCase):
         }
         response = self.client.post(self.url, payload, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code,
+                         status.HTTP_400_BAD_REQUEST
+                         )
         self.assertIn("email", response.data)
         self.assertIn("Invalid credentials.", response.data["email"][0])
 
@@ -249,3 +255,4 @@ class LogoutViewTest(APITestCase):
         self.assertEqual(response.cookies["refresh_token"].value, "")
         self.assertIn("access_token", response.cookies)
         self.assertEqual(response.cookies["access_token"].value, "")
+        

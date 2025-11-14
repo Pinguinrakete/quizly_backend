@@ -35,7 +35,8 @@ class YoutubeURLSerializer(serializers.Serializer):
     Methods:
         - validate_url(url): Validates and normalizes
           the provided YouTube URL.
-        - create(): Reads quiz data from JSON and creates a `Quiz` with questions.
+        - create(): Reads quiz data from JSON and creates a `Quiz`
+          with questions.
 
     Raises:
         - serializers.ValidationError: If the URL or JSON data is invalid, or
@@ -153,7 +154,9 @@ class QuestionSerializer(serializers.ModelSerializer):
     """
 
     question_options = serializers.ListField(
-        child=serializers.CharField(max_length=255), required=False, default=list
+        child=serializers.CharField(max_length=255),
+        required=False,
+        default=list
     )
 
     class Meta:
@@ -228,7 +231,9 @@ class QuestionForQuizzesSerializer(serializers.ModelSerializer):
     """
 
     question_options = serializers.ListField(
-        child=serializers.CharField(max_length=255), required=False, default=list
+        child=serializers.CharField(max_length=255),
+        required=False,
+        default=list
     )
 
     class Meta:
