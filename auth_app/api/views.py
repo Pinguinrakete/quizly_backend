@@ -3,12 +3,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
 from .serializers import CookieTokenObtainPairSerializer, RegisterSerializer
-
+from rest_framework.serializers import ValidationError
 
 class RegisterView(APIView):
     """
@@ -103,9 +104,13 @@ class CookieTokenRefreshView(TokenRefreshView):
         refresh = request.COOKIES.get("refresh_token")
         serializer = self.get_serializer(data={"refresh": refresh})
 
+    def post(self, request, *args, **kwargs):
+        refresh = request.COOKIES.get("refresh_token")
+        serializer = self.get_serializer(data={"refresh": refresh})
+
         try:
             serializer.is_valid(raise_exception=True)
-        except:
+        except (ValidationError, TokenError):
             return Response(
                 {"detail": "Refresh token invalid!"},
                 status=status.HTTP_401_UNAUTHORIZED,

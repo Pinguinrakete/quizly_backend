@@ -96,14 +96,25 @@ class AudioQuestionGenerator:
             - Return the output strictly in the following JSON format:
 
             {{
-            "title": "Create a concise quiz title based on the topic of the transcript.",
-            "description": "Summarize the transcript in no more than 150 characters. Do not include any quiz questions or answers.",
+            "title": (
+                "Create a concise quiz title based on the topic "
+                "of the transcript."
+            ),
+            "description": (
+                "Summarize the transcript in no more than 150 characters. "
+                "Do not include any quiz questions or answers."
+            ),
             "questions": [
-                {{
-                "question_title": "The question goes here.",
-                "question_options": ["Option A", "Option B", "Option C", "Option D"],
-                "answer": "The correct answer from the above options"
-                }}
+                {
+                    "question_title": "The question goes here.",
+                    "question_options": [
+                        "Option A",
+                        "Option B",
+                        "Option C",
+                        "Option D"
+                    ],
+                    "answer": "The correct answer from the above options"
+                }
             ]
             }}
 
