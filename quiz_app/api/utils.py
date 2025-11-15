@@ -66,6 +66,7 @@ class AudioQuestionGenerator:
             self.audio_track = "audio_track"
 
     def transcribe_whisper(self):
+        import whisper 
         model = whisper.load_model("small", device="cpu")
         audio_file = f"media/{self.audio_track}.wav"
 

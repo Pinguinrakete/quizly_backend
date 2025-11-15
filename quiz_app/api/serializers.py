@@ -72,7 +72,6 @@ class YoutubeURLSerializer(serializers.Serializer):
         }
 
         video_url = f"https://www.youtube.com/watch?v={video_id}"
-
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             duration = info.get("duration")
