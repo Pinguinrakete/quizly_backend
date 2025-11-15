@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 from .serializers import CookieTokenObtainPairSerializer, RegisterSerializer
 from rest_framework.serializers import ValidationError
 
+
 class RegisterView(APIView):
     """
     Create a new user account.
@@ -99,10 +100,6 @@ class CookieTokenRefreshView(TokenRefreshView):
     """
 
     permission_classes = [AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        refresh = request.COOKIES.get("refresh_token")
-        serializer = self.get_serializer(data={"refresh": refresh})
 
     def post(self, request, *args, **kwargs):
         refresh = request.COOKIES.get("refresh_token")

@@ -1,19 +1,21 @@
-import os  # If this is removed, the tests will fail!
-import whisper  # If this is removed, the tests will fail!
-import yt_dlp  # If this is removed, the tests will fail!
 from django.db import DatabaseError
 from django.shortcuts import get_object_or_404
+
 from rest_framework import generics, status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from quiz_app.models import Quiz
-
 from .permissions import IsOwner
-from .serializers import (CreateQuizSerializer, MyQuizzesSerializer,
-                          QuizSinglePatchSerializer, YoutubeURLSerializer)
+from .serializers import (
+    CreateQuizSerializer,
+    MyQuizzesSerializer,
+    QuizSinglePatchSerializer,
+    YoutubeURLSerializer,
+)
 from .utils import AudioQuestionGenerator
 
 
@@ -21,8 +23,9 @@ class CreateQuizView(APIView):
     """
     Create a quiz from a YouTube video URL.
 
-    Authenticated users can submit a YouTube URL to automatically
-    generate a quiz. The view handles multiple processing steps:
+    Authenticated users can submit a YouTube URL
+    to automatically generate a quiz. The view
+    handles multiple processing steps:
     - Downloads the audio from the YouTube video.
     - Transcribes the audio using Whisper.
     - Generates quiz questions using the Gemini model.
@@ -82,7 +85,11 @@ class CreateQuizView(APIView):
                 generate.edge_cleaner_text()
             except Exception as e:
                 return Response(
-                    {"detail": f"Cleaning text ending failed: {str(e)}"},
+                    {
+                        "detail": (
+                            f"Cleaning text ending failed: {str(e)}"
+                        )
+                    },
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
@@ -97,8 +104,8 @@ class CreateQuizView(APIView):
             try:
                 quiz = serializer.create()
                 return Response(
-                    CreateQuizSerializer(
-                        quiz).data, status=status.HTTP_201_CREATED
+                    CreateQuizSerializer(quiz).data,
+                    status=status.HTTP_201_CREATED
                 )
             finally:
                 generate.delete_generated_text()
@@ -131,7 +138,10 @@ class MyQuizzesView(generics.ListAPIView):
             serializer = MyQuizzesSerializer(
                 quiz, many=True, context={"request": request}
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+                )
 
         except Exception as e:
             return Response(
@@ -155,23 +165,24 @@ class QuizSingleView(APIView):
         - 404 Not Found: Quiz not found.
         - 500 Internal Server Error: Unexpected error.
     """
-
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
-    def get(self, request, pk):
+    def get_object(self, pk):
         quiz = get_object_or_404(Quiz, id=pk)
+        if not IsOwner().has_object_permission(self.request, self, quiz):
+            raise PermissionDenied(
+                "You do not have permission to access this quiz."
+                )
+        return quiz
+
+    def get(self, request, pk):
+        quiz = self.get_object(pk)
         serializer = MyQuizzesSerializer(quiz, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
     def patch(self, request, pk):
-        try:
-            quiz = Quiz.objects.get(id=pk)
-        except Quiz.DoesNotExist:
-            return Response(
-                {"detail": "Quiz not found."}, status=status.HTTP_404_NOT_FOUND
-            )
-
+        quiz = self.get_object(pk)
         serializer = QuizSinglePatchSerializer(
             quiz, data=request.data, partial=True, context={"request": request}
         )
@@ -179,12 +190,11 @@ class QuizSingleView(APIView):
             quiz = serializer.save()
             return Response(
                 MyQuizzesSerializer(quiz, context={"request": request}).data
-            )
-
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        quiz = get_object_or_404(Quiz, id=pk)
+        quiz = self.get_object(pk)
         try:
             quiz.delete()
         except DatabaseError as e:
