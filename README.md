@@ -88,19 +88,22 @@ brew install ffmpeg
 ```
 ### 3. Clone the repository:
 ```bash
+create a folder "quizly_backend"
+open the folder in VSCode
+open the console
 git clone https://github.com/Pinguinrakete/quizly_backend.git .
 ```   
 
-### 4. Create a virtual environment to isolate our package dependencies locally
+### 4. Create a virtual environment to locally isolate our package dependencies and activate it.
+### Windows 10/11
 ```bash
 py -3.11 -m venv env   
-``` 
-### Windows
-```bash
 .\env\Scripts\activate
-```  
+``` 
 ### LINUX / MAC OS 
 ```bash
+sudo apt install python3.11-venv
+python3.11 -m venv env
 source env\bin\activate
 ```  
 ### 5. Install dependencies
