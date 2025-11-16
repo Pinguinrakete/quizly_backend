@@ -18,7 +18,7 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
 
 
 ## ![Tech Stack Icon](assets/icons/stack.png) Tech Stack
-    • Python 3.11.9
+    • Python 3.11
     • Django 5.2.7
     • Django REST Framework 3.16.1
     • JWT-Authentifizierung  |    Sicherer Login mit JSON Web Tokens
@@ -26,10 +26,63 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • yt-dlp                 |    Download the audio from the video.
     • Whisper                |    Transcribe the audio into text.
     • AI gemini-2.5-flash    |    Generate questions and answers from the text.
+
+## ![Tech Stack Icon](assets/icons/folder.png) Project Structure
+QUIZLY-BACKEND/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── assets/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── icons/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── auth_app/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── api/    
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializer.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── tests.py   
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── core/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;├── settings.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;└── urls.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── quiz_app/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── api/    
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── permissions.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializer.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── utils.py     
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── admin.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── apps.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── models.py     
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── tests.py   
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── env.template  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── db.sqlite3  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── manage.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── readme.md  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;└── requirements.txt  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ![Installation Icon](assets/icons/installation.png) Installation
 ## Windows 10/11
-### 1. Python 3.11.9
-Check if your Python version is 3.11.9, opening PowerShell or CMD and typing:
+### 1. Python 3.11
+Check if your Python version is 3.11, opening PowerShell or CMD and typing:
 ``` bash 
  py --version
  ``` 
@@ -46,7 +99,7 @@ Check all installed Python Versions
  py -0
  ``` 
 ## LINUX
-Check if your Python version is 3.11.9, opening bash and typing:
+Check if your Python version is 3.11, opening bash and typing:
 ``` bash 
  python3 --version
  ``` 
@@ -62,7 +115,7 @@ sudo apt update
 ls /usr/bin/python* 
  ``` 
 ## MAC OS
-Check if your Python version is 3.11.9, opening bash and typing:
+Check if your Python version is 3.11, opening bash and typing:
 ``` bash 
  python3 --version
  ``` 
@@ -110,7 +163,11 @@ pip install -r requirements.txt
 ```bash
 python manage.py migrate
 ```
-### 8. Generate a Gemini API-Key for model "gemini-2.5-flash"
+### 8. Create a Admin User.
+```bash
+python manage.py createsuperuser
+```
+### 9. Generate a Gemini API-Key for model "gemini-2.5-flash"
 ```bash
 1. Sign to your Google Cloud account.
 
@@ -122,14 +179,14 @@ python manage.py migrate
 
 5. Use this key to authenticate requests to the gemini-2.5-flash model.
 ```
-### 9. Creating and filling a .env
+### 10. Creating and filling a .env
 ```bash
 Please rename the .env.template to .env and set all necessary environment variables.
 
 Generate a SCRET_KEY, please open the PowerShell:
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
-### 10. Start the server.
+### 11. Start the server.
 ```bash
 python manage.py runserver
 ```

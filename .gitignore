@@ -22,5 +22,8 @@ env/
 # Media files
 media/
 
-#coverage
+# coverage
 .coverage
+
+# pytest
+.pytest_cache/

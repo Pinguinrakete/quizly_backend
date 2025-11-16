@@ -1,6 +1,5 @@
 import os
 
-import whisper
 import yt_dlp
 from dotenv import load_dotenv
 from google import genai
