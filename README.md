@@ -88,7 +88,7 @@ brew install ffmpeg
 ```
 ### 3. Clone the repository:
 ```bash
-git clone https://https://github.com/Pinguinrakete/quizly_backend.git .
+git clone https://github.com/Pinguinrakete/quizly_backend.git .
 ```   
 
 ### 4. Create a virtual environment to isolate our package dependencies locally
@@ -101,23 +101,14 @@ py -3.11 -m venv env
 ```  
 ### LINUX / MAC OS 
 ```bash
-source env/bin/activate
+source env\bin\activate
 ```  
 ### 5. Install dependencies
 ```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt 
 ``` 
-### 6. Migrations are applied to the database.
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-### 7. Create a Admin User.
-```bash
-python manage.py createsuperuser
-```
-### 8. Generate a Gemini API-Key for model "gemini-2.5-flash"
+### 6. Generate a Gemini API-Key for model "gemini-2.5-flash"
 ```bash
 1. Sign to your Google Cloud account.
 
@@ -129,12 +120,21 @@ python manage.py createsuperuser
 
 5. Use this key to authenticate requests to the gemini-2.5-flash model.
 ```
-### 9. Creating and filling a .env
+### 7. Creating and filling a .env
 ```bash
 Please rename the .env.template to .env and set all necessary environment variables.
 
 Generate a SCRET_KEY, please open the PowerShell:
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+### 8. Migrations are applied to the database.
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+### 9. Create a Admin User.
+```bash
+python manage.py createsuperuser
 ```
 ### 10. Start the server.
 ```bash
