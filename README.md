@@ -21,6 +21,7 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
     • Python 3.11
     • Django 5.2.7
     • Django REST Framework 3.16.1
+    • FFMPEG - Video encoder
     • JWT-Authentifizierung  |    Sicherer Login mit JSON Web Tokens
     • SQLite3                |    Database
     • yt-dlp                 |    Download the audio from the video.
@@ -49,7 +50,7 @@ QUIZLY-BACKEND/
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── permissions.py  &emsp;&emsp;&emsp;&nbsp;# Custom permissions for quiz API access  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializer.py   &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;# Serializers for quiz-related models  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py  &nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;# API URL routes for quiz features  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── utils.py     &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;# Helper functions for quiz logic  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── utils.py     &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;# Helper functions: Download the audio, whisper, gemini  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py   &nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;# API endpoint logic for quizzes  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── admin.py   &nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;# Admin panel configuration for quiz models  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── apps.py  &nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Django app configuration  
@@ -62,82 +63,29 @@ QUIZLY-BACKEND/
 &emsp;&emsp;&nbsp;&emsp;&nbsp;├── readme.md  &nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;# Project documentation and setup guide  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;└── requirements.txt  &emsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Python dependencies for the project  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ![Installation Icon](assets/icons/installation.png) Installation
-## Windows 10/11
-### 1. Python 3.11
-Check if your Python version is 3.11, opening PowerShell or CMD and typing:
-``` bash 
- py --version
- ``` 
-If you have a different version, install version 3.11.9. <br> 
-If winget is installed, open PowerShell or CMD and type:
-``` bash 
-winget install --id Python.Python.3.11 --version 3.11.9
-``` 
-If winget is not installed: <br>
-Installed from https://www.python.org/downloads/<br><br>
-
-Check all installed Python Versions
-``` bash 
- py -0
- ``` 
-## LINUX
-Check if your Python version is 3.11, opening bash and typing:
-``` bash 
- python3 --version
- ``` 
-Open bash:
-``` bash 
-sudo apt update
-sudo apt install software-properties-common -y
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-```
- Check all installed Python Versions
-``` bash 
-ls /usr/bin/python* 
- ``` 
-## MAC OS
-Check if your Python version is 3.11, opening bash and typing:
-``` bash 
- python3 --version
- ``` 
- ### 2. FFMPEG - Video encoder
-Check if FFMPEG is installed by opening PowerShell or CMD and typing:
-``` bash 
- FFMPEG -version
- ``` 
-If winget is installed, open PowerShell or CMD and type:
-``` bash 
-winget install --id Gyan.FFmpeg -e --source winget
-```
-If winget is not installed: <br>
+### 1. Install Python 3.11
+Installed from https://www.python.org/downloads/<br>
+### 2. FFMPEG - Video encoder
+### Windows 10/11
 &nbsp;&nbsp;Download the latest FFmpeg build: https://ffmpeg.org/download.html <br>
 &nbsp;&nbsp;Windows builds (usually from gyan.dev or BtbN).
 <br><br>
-Unpack the ZIP file, e.g., to C:\ffmpeg<br>
+&nbsp;&nbsp;Unpack the ZIP file, e.g., to C:\ffmpeg<br>
 &nbsp;&nbsp;Go to the bin folder → ffmpeg.exe is located there. <br>
-Add the bin path to the environment variables:<br>
-&nbsp;•&nbsp;Right-click on 'This PC' → 'Properties' → 'Advanced system settings'.<br>
-&nbsp;•&nbsp;Click 'Environment Variables...' → add the entry C:\ffmpeg\bin to the Path.
+&nbsp;&nbsp;Add the bin path to the environment variables:<br>
+&nbsp;&nbsp;&nbsp;•&nbsp;Right-click on 'This PC' → 'Properties' → 'Advanced system settings'.<br>
+&nbsp;&nbsp;&nbsp;•&nbsp;Click 'Environment Variables...' → add the entry C:\ffmpeg\bin to the Path.
 
+### Linux
+```bash
+sudo apt update
+sudo apt install ffmpeg 
+```
+### Mac OS
+```bash
+brew install ffmpeg 
+```
 ### 3. Clone the repository:
 ```bash
 git clone https://https://github.com/Pinguinrakete/quizly_backend.git .
@@ -151,23 +99,25 @@ py -3.11 -m venv env
 ```bash
 .\env\Scripts\activate
 ```  
-### 5. Update pip
+### LINUX / MAC OS 
+```bash
+source env/bin/activate
+```  
+### 5. Install dependencies
 ```bash
 python -m pip install --upgrade pip
-``` 
-### 6. Install dependencies
-```bash
 pip install -r requirements.txt 
 ``` 
-### 7. Migrations are applied to the database.
+### 6. Migrations are applied to the database.
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
-### 8. Create a Admin User.
+### 7. Create a Admin User.
 ```bash
 python manage.py createsuperuser
 ```
-### 9. Generate a Gemini API-Key for model "gemini-2.5-flash"
+### 8. Generate a Gemini API-Key for model "gemini-2.5-flash"
 ```bash
 1. Sign to your Google Cloud account.
 
@@ -179,17 +129,18 @@ python manage.py createsuperuser
 
 5. Use this key to authenticate requests to the gemini-2.5-flash model.
 ```
-### 10. Creating and filling a .env
+### 9. Creating and filling a .env
 ```bash
 Please rename the .env.template to .env and set all necessary environment variables.
 
 Generate a SCRET_KEY, please open the PowerShell:
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
-### 11. Start the server.
+### 10. Start the server.
 ```bash
 python manage.py runserver
 ```
+You can reach the backend at http://127.0.0.1:8000/
 ## ![API Endpoints Icon](assets/icons//api.png) API Endpoint Documentation
 ### ![Authentication Icon](assets/icons/authentication.png) Authentication 
 
