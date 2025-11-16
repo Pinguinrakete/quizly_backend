@@ -30,37 +30,37 @@ For secure session management, a JWT authentication with HttpOnly cookies is use
 ## ![Tech Stack Icon](assets/icons/folder.png) Project Structure
 QUIZLY-BACKEND/  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── assets/  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── icons/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── assets/  &emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&emsp;# Static project assets (images, files, etc.)  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── icons/ &emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Icon files used by the application   
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── auth_app/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── auth_app/  &nbsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Django app handling authentication features  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── api/    
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializer.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── tests.py   
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializers.py  &emsp;&emsp;&emsp;&nbsp;&emsp;# validates, converts, and represents data  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py &nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# API URL routes for authentication  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py  &nbsp;&nbsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# API URL routes for authentication  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── tests.py &emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Tests for authentication functionality   
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── core/  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;├── settings.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;└── urls.py  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── core/  &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Main project configuration module  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;├── settings.py  &nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Django project settings (config, installed apps, etc.)  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;└── urls.py  &emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;# Root URL routing for the whole project  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── quiz_app/  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── quiz_app/  &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;# Django app handling quizzes and related features  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── api/    
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── permissions.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializer.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── utils.py     
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── admin.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── apps.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── models.py     
-&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── tests.py   
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── permissions.py  &emsp;&emsp;&emsp;&nbsp;# Custom permissions for quiz API access  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── serializer.py   &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;# Serializers for quiz-related models  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── urls.py  &nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;# API URL routes for quiz features  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;├── utils.py     &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;# Helper functions for quiz logic  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&emsp;&emsp;&emsp;└──  views.py   &nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;# API endpoint logic for quizzes  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── admin.py   &nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;# Admin panel configuration for quiz models  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── apps.py  &nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Django app configuration  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;├── models.py     &nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Database models for quizzes  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;│   &emsp;&emsp;&nbsp;&nbsp;└── tests.py    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Tests for quiz functionality  
 &emsp;&emsp;&nbsp;&emsp;&nbsp;│  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── env.template  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── db.sqlite3  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── manage.py  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;├── readme.md  
-&emsp;&emsp;&nbsp;&emsp;&nbsp;└── requirements.txt  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── env.template   &emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Template file for environment variables  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── db.sqlite3  &nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# SQLite database used for development  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── manage.py  &nbsp;&nbsp;&nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Django CLI management script  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;├── readme.md  &nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;# Project documentation and setup guide  
+&emsp;&emsp;&nbsp;&emsp;&nbsp;└── requirements.txt  &emsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&nbsp;&emsp;&emsp;&emsp;&nbsp;&emsp;# Python dependencies for the project  
 
 
 
