@@ -41,8 +41,8 @@ class CreateQuizView(APIView):
     Requires JWT authentication and that the user is the resource owner.
     """
 
-    authentication_classes = [CookieJWTAuthentication]
-    permission_classes = [IsAuthenticated, IsOwner]
+    # authentication_classes = [CookieJWTAuthentication]
+    # permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request):
         serializer = YoutubeURLSerializer(

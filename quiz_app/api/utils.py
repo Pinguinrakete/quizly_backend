@@ -90,22 +90,15 @@ class AudioQuestionGenerator:
             - Each question must have exactly 4 distinct answer options.
             - Each question must have exactly one correct answer.
             - Include the correct answer in the 'question_options'.
-            - Do not include explanations, comments,
-              or any text outside the JSON.
+            - Do not include explanations, comments, or any text outside the JSON.
             - Answer in English only.
             - Return the output strictly in the following JSON format:
 
             {{
-            "title": (
-                "Create a concise quiz title based on the topic "
-                "of the transcript."
-            ),
-            "description": (
-                "Summarize the transcript in no more than 150 characters. "
-                "Do not include any quiz questions or answers."
-            ),
+            "title": "Create a concise quiz title based on the topic of the transcript.",
+            "description": "Summarize the transcript in no more than 150 characters. Do not include any quiz questions or answers.",
             "questions": [
-                {
+                {{
                     "question_title": "The question goes here.",
                     "question_options": [
                         "Option A",
@@ -114,7 +107,7 @@ class AudioQuestionGenerator:
                         "Option D"
                     ],
                     "answer": "The correct answer from the above options"
-                }
+                }}
             ]
             }}
 
