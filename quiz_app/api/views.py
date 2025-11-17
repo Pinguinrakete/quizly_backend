@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from quiz_app.models import Quiz
-from .permissions import IsOwner
+from .permissions import IsOwner, CookieJWTAuthentication
 from .serializers import (
     CreateQuizSerializer,
     MyQuizzesSerializer,
@@ -41,7 +41,7 @@ class CreateQuizView(APIView):
     Requires JWT authentication and that the user is the resource owner.
     """
 
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request):
@@ -129,7 +129,7 @@ class MyQuizzesView(generics.ListAPIView):
     Requires JWT authentication and ownership permissions.
     """
 
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get(self, request, *args, **kwargs):
@@ -165,7 +165,7 @@ class QuizSingleView(APIView):
         - 404 Not Found: Quiz not found.
         - 500 Internal Server Error: Unexpected error.
     """
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_object(self, pk):
