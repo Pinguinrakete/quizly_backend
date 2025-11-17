@@ -70,6 +70,13 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PATCH",
+    "DELETE"
+]
+
 ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
