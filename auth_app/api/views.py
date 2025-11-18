@@ -1,3 +1,4 @@
+from .permissions import IsOwner, CookieJWTAuthentication
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -141,8 +142,8 @@ class LogoutView(APIView):
     and removing authentication cookies.
     """
 
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request):
         try:
