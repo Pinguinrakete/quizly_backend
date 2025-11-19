@@ -123,9 +123,12 @@ pip install -r requirements.txt
 
 5. Use this key to authenticate requests to the gemini-2.5-flash model.
 ```
-### 7. Creating and filling a .env
-
-## Please rename the .env.template to .env and set all necessary environment variables.
+### 7. Please rename the .env.template to .env and set all necessary environment variables.
+### Variables That Must Be Set:
+&nbsp;&nbsp;&nbsp;•&nbsp;Insert the API key from step 6 into GEMINI_API_KEY=your_gemini_api_key  
+&nbsp;&nbsp;&nbsp;•&nbsp;Next, generate a SECRET_KEY (see the lines below for Windows 10/11 or Linux/macOS)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and replace SECRET_KEY_PLACEHOLDER with your generated value.
+## 
 ### Windows 10/11
 ```bash
 Generate a SCRET_KEY, please open the PowerShell:
