@@ -45,72 +45,90 @@ class CreateQuizView(APIView):
 
     def post(self, request):
         serializer = YoutubeURLSerializer(
-            data=request.data, context={"request": request}
+            data=request.data,
+            context={"request": request}
         )
-        if serializer.is_valid():
-            url = serializer.validated_data["url"]
 
-            generate = AudioQuestionGenerator()
-            try:
-                generate.download_audio(url)
-            except Exception as e:
-                return Response(
-                    {"detail": f"Audio download failed: {str(e)}"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            try:
-                generate.transcribe_whisper()
-            except Exception as e:
-                return Response(
-                    {"detail": f"Whisper transcription failed: {str(e)}"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+        url = serializer.validated_data["url"]
+        generate = AudioQuestionGenerator()
 
-            try:
-                generate.generate_questions_gemini()
-            except Exception as e:
-                return Response(
-                    {
-                        "detail": (
-                            "Generating questions with Gemini failed: "
-                            f"{str(e)}"
-                        )
-                    },
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+        error_response = (
+            self.handle_audio_download(generate, url)
+            or self.handle_transcription(generate)
+            or self.handle_question_generation(generate)
+            or self.handle_text_cleaning(generate)
+            or self.handle_delete_transcribed(generate)
+        )
 
-            try:
-                generate.edge_cleaner_text()
-            except Exception as e:
-                return Response(
-                    {
-                        "detail": (
-                            f"Cleaning text ending failed: {str(e)}"
-                        )
-                    },
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+        if error_response:
+            return error_response
 
-            try:
-                generate.delete_transcribed_text()
-            except Exception as e:
-                return Response(
-                    {"detail": f"Deleting transcribed text failed: {str(e)}"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+        try:
+            quiz = serializer.create()
+            return Response(
+                CreateQuizSerializer(quiz).data,
+                status=status.HTTP_201_CREATED
+            )
+        finally:
+            generate.delete_generated_text()
 
-            try:
-                quiz = serializer.create()
-                return Response(
-                    CreateQuizSerializer(quiz).data,
-                    status=status.HTTP_201_CREATED
-                )
-            finally:
-                generate.delete_generated_text()
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    """ 
+    Helper methods for handling each processing step from CreateQuizView.
+    """
+    def handle_audio_download(self, generate, url):
+        try:
+            generate.download_audio(url)
+        except Exception as e:
+            return Response(
+                {"detail": f"Audio download failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
+    def handle_transcription(self, generate):
+        try:
+            generate.transcribe_whisper()
+        except Exception as e:
+            return Response(
+                {"detail": f"Whisper transcription failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def handle_question_generation(self, generate):
+        try:
+            generate.generate_questions_gemini()
+        except Exception as e:
+            return Response(
+                {
+                    "detail": (
+                        "Generating questions with Gemini failed: "
+                        f"{str(e)}"
+                    )
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def handle_text_cleaning(self, generate):
+        try:
+            generate.edge_cleaner_text()
+        except Exception as e:
+            return Response(
+                {"detail": f"Cleaning text ending failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def handle_delete_transcribed(self, generate):
+        try:
+            generate.delete_transcribed_text()
+        except Exception as e:
+            return Response(
+                {"detail": f"Deleting transcribed text failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        
 
 class MyQuizzesView(generics.ListAPIView):
     """
