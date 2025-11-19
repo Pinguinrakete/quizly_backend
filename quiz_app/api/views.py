@@ -210,6 +210,9 @@ class QuizSingleView(APIView):
 
     def delete(self, request, pk):
         quiz = self.get_object(pk)
+
+        quiz.questions.all().delete()
+        
         try:
             quiz.delete()
         except DatabaseError as e:
