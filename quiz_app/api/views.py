@@ -38,6 +38,8 @@ class CreateQuizView(APIView):
           transcription, question generation, or cleanup) fails.
 
     Requires JWT authentication and that the user is the resource owner.
+
+    All functions have been outsourced...
     """
 
     authentication_classes = [CookieJWTAuthentication]
@@ -75,10 +77,6 @@ class CreateQuizView(APIView):
         finally:
             generate.delete_generated_text()
 
-
-    """ 
-    Helper methods for handling each processing step from CreateQuizView.
-    """
     def handle_audio_download(self, generate, url):
         try:
             generate.download_audio(url)
@@ -128,7 +126,7 @@ class CreateQuizView(APIView):
                 {"detail": f"Deleting transcribed text failed: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        
+
 
 class MyQuizzesView(generics.ListAPIView):
     """
