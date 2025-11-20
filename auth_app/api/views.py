@@ -12,11 +12,6 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 
 from .serializers import CookieTokenObtainPairSerializer, RegisterSerializer
 from rest_framework.serializers import ValidationError
-from django.conf import settings
-from dotenv import load_dotenv
-
-load_dotenv()
-debug = os.getenv("DEBUG")
 
 
 class RegisterView(APIView):
@@ -80,7 +75,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 value=str(access),
                 httponly=True,
                 secure=True,
-                samesite="None",
+                samesite="Lax",
                 max_age=10 * 60,
             )
 
@@ -89,7 +84,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 value=str(refresh),
                 httponly=True,
                 secure=True,
-                samesite="None",
+                samesite="Lax",
                 max_age=24 * 60 * 60,
             )
 
@@ -136,7 +131,7 @@ class CookieTokenRefreshView(TokenRefreshView):
             value=str(access),
             httponly=True,
             secure=True,
-            samesite="None",
+            samesite="Lax",
             max_age=10 * 60,
         )
 
