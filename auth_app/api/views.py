@@ -1,3 +1,4 @@
+import os
 from .permissions import IsOwner, CookieJWTAuthentication
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -11,6 +12,11 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 
 from .serializers import CookieTokenObtainPairSerializer, RegisterSerializer
 from rest_framework.serializers import ValidationError
+from django.conf import settings
+from dotenv import load_dotenv
+
+load_dotenv()
+debug = os.getenv("DEBUG")
 
 
 class RegisterView(APIView):
@@ -73,7 +79,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 key="access_token",
                 value=str(access),
                 httponly=True,
-                secure=True,
+                secure=False if debug else True,
                 samesite="Lax",
                 max_age=10 * 60,
             )
@@ -82,7 +88,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 key="refresh_token",
                 value=str(refresh),
                 httponly=True,
-                secure=True,
+                secure=False if debug else True,
                 samesite="Lax",
                 max_age=24 * 60 * 60,
             )
@@ -104,6 +110,7 @@ class CookieTokenRefreshView(TokenRefreshView):
 
     def post(self, request, *args, **kwargs):
         refresh = request.COOKIES.get("refresh_token")
+        print('refresh.............:', refresh)
         serializer = self.get_serializer(data={"refresh": refresh})
 
         try:
