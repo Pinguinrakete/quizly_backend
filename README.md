@@ -104,7 +104,7 @@ py -3.11 -m venv env
 ```bash
 sudo apt install python3.11-venv
 python3.11 -m venv env
-source env\bin\activate
+source env/bin/activate
 ```  
 ### 5. Install dependencies
 ```bash
